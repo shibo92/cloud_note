@@ -61,3 +61,9 @@
 
 ### redis和db一致性解决方案
 + 类似mysql的主从复制原理，使用binlog解决。具体实现有阿里的canal
+
+### http解析流程
+1. http解析
+2. 缓存
+3. dns域名解析
+
