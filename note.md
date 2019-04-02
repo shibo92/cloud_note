@@ -63,7 +63,10 @@
 + 类似mysql的主从复制原理，使用binlog解决。具体实现有阿里的canal
 
 ### http解析流程
-1. http解析
-2. 缓存
-3. dns域名解析
++ http解析
++ 缓存
++ dns域名解析
 
+### class.forName()和classLoader区别
++ class.forName()前者除了将类的.class文件加载到jvm中之外，还会对类进行解释，执行类中的static块。
++ classLoader只是将.class文件加载到jvm中，不会执行static中的内容,只有在newInstance才会去执行static块。
