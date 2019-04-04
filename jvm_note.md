@@ -1,3 +1,9 @@
+
+<!-- vim-markdown-toc GFM -->
+
+* [java内存区域](#java内存区域)
+
+<!-- vim-markdown-toc -->
 ### java内存区域
 1. 程序计数器
 2. 虚拟机栈、本地方法栈

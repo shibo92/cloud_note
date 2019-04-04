@@ -1,3 +1,21 @@
+
+<!-- vim-markdown-toc GFM -->
+
+* [责任链模式](#责任链模式)
+* [springcloud 和 dubbo的区别](#springcloud-和-dubbo的区别)
+* [分布式-微服务-集群的区别](#分布式-微服务-集群的区别)
+* [mysql orderBy的优化](#mysql-orderby的优化)
+* [redis两种持久化方式](#redis两种持久化方式)
+* [Lock 和 Synchronized区别](#lock-和-synchronized区别)
+* [String类为什么是final的](#string类为什么是final的)
+* [对象类型数据和实例数据](#对象类型数据和实例数据)
+* [java永久代](#java永久代)
+* [redis和db一致性解决方案](#redis和db一致性解决方案)
+* [http解析流程](#http解析流程)
+* [class.forName()和classLoader区别](#classforname和classloader区别)
+* [redis i/o多路复用](#redis-io多路复用)
+
+<!-- vim-markdown-toc -->
 ### 责任链模式
 + 责任链模式和组件化很像，将各个功能块单独抽离出来，即插即用
 
