@@ -17,6 +17,8 @@
 * [对象进入老年代的条件](#对象进入老年代的条件)
 * [mysql主从同步的工作过程](#mysql主从同步的工作过程)
 * [过滤器（filter）和拦截器（interceptor）区别](#过滤器filter和拦截器interceptor区别)
+* [scp上传下载命令](#scp上传下载命令)
+* [mysql orderBy优化](#mysql-orderby优化)
 
 <!-- vim-markdown-toc -->
 
@@ -120,4 +122,45 @@
   4. filter的过滤一般在加载的时候在init方法声明，而interceptor可以通过在xml声明是guest请求还是user请求来辨别是否过滤； 
   5. interceptor可以访问action上下文、值栈里的对象，而filter不能； 
   6. 在action的生命周期中，拦截器可以被多次调用，而过滤器只能在容器初始化时被调用一次。
+
+### scp上传下载命令
+  scp [参数] [原路径] [目标路径]
+  1. 上传
+  命令格式：scp local_file remote_username@remote_ip:remote_folder 
+  例如： scp  -P 40022 /Users/shibo/local/huawei_unsigned_signed.apk root@ip:/home/qiban/bzit_app/ 
+  2. 下载
+  例如： scp root@ip:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
+
+### mysql orderBy优化
+  问题 select * from t where xxx limit xx,xx 加上orderBy之后查询速度下降。
+  
+  慢的原因主要是排序，尤其是分片的排序，
+  mycat会在所有分片进行排序操作取limit50，然后在mycat内存中再次排序取limit50
+  如果不排序的话，mycat只需要随便取一个分片的50条即可，这个计算量差别是很大的，分片越多越慢
+  按主键排序的话，innodb的索引是带有主键的，
+  所以where加order是可以走索引（覆盖索引），前提是select不能有索引字段以外的列
+  
+  解决方案：
+  1、加索引
+  2、嵌套一个子查询，只用来查询有索引的字段
+  SELECT 
+  a.id,
+  a.emailto,
+  a.channel,
+  a.AppName,
+  a.AmazonOrderId 
+  from eis_email_history a join 
+  (select id FROM eis_email_history WHERE AppName = 21 AND custidStatus IN (0, 1, 2) AND channel = '*' 
+  ORDER BY id DESC LIMIT 50
+  ) b on a.id=b.id;
+  
+  链接地址：https://explainextended.com/2010/08/24/20-latest-unique-records/
+
+  1. dubbo暴露的是service层的接口，使用的方式为：消费者的controller层调用服务提供者的service.
+  springcloud暴露的是controller接口，使用的方式为：消费者的service层调用服务者的controller。（类似于http方式调用）
+  2. 一个是基于rpc，一个是基于http
+  3. dubbo由于是二进制的传输，占用带宽会更少
+  springCloud是http协议传输，带宽会比较多，同时使用http协议一般会使用JSON报文，消耗会更大
+  4. dubbo的开发难度较大，原因是dubbo的jar包依赖问题很多大型工程无法解决
+  5. dubbo的注册中心可以选择zk,redis等多种，springcloud的注册中心只能用eureka或者自研
 
