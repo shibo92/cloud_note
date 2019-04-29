@@ -16,6 +16,7 @@
 * [redis i/o多路复用](#redis-io多路复用)
 * [对象进入老年代的条件](#对象进入老年代的条件)
 * [mysql主从同步的工作过程](#mysql主从同步的工作过程)
+* [过滤器（filter）和拦截器（interceptor）区别](#过滤器filter和拦截器interceptor区别)
 
 <!-- vim-markdown-toc -->
 
@@ -105,9 +106,18 @@
 3. 相同年龄的对象大小之和大于survivor(幸存区)大小的的一半，所有相同年龄的对象都进入老年代
 
 ### mysql主从同步的工作过程 
-a、主库上会开启了二进制bin-log日志记录，同时运行有一个IO线程；
-b、主库上对于需要同步的数据库或者表所发生的所有DML操作都会被记录到bin-log二进制日志文件中；
-c、从库上开启relay-log日志，同时运行有一个IO线程和一个SQL线程；
-d、IO线程负责从主库中读取bin-log二进制日志，并写入到本地的relay-log日志中，同时记录从库所读取到的主库的日志文件位置信息，以便下次从这个位置点再次读取；
-e、SQL线程负责从本地的relay-log日志中读取同步到的二进制日志，并解析为数据库可以识别的SQL语句，然后应用到本地数据库，完成同步；
-f、执行完relay-log中的操作之后，进入睡眠状态，等待主库产生新的更新；
+  1. 主库上会开启了二进制bin-log日志记录，同时运行有一个IO线程；
+  2. 主库上对于需要同步的数据库或者表所发生的所有DML操作都会被记录到bin-log二进制日志文件中；
+  3. 从库上开启relay-log日志，同时运行有一个IO线程和一个SQL线程；
+  4. IO线程负责从主库中读取bin-log二进制日志，并写入到本地的relay-log日志中，同时记录从库所读取到的主库的日志文件位置信息，以便下次从这个位置点再次读取；
+  5. SQL线程负责从本地的relay-log日志中读取同步到的二进制日志，并解析为数据库可以识别的SQL语句，然后应用到本地数据库，完成同步；
+  6. 执行完relay-log中的操作之后，进入睡眠状态，等待主库产生新的更新；
+
+### 过滤器（filter）和拦截器（interceptor）区别 
+  1. filter基于filter接口中的doFilter回调函数，interceptor则基于Java本身的反射机制； 
+  2. filter是依赖于servlet容器的，没有servlet容器就无法回调doFilter方法，而interceptor与servlet无关； 
+  3. filter的过滤范围比interceptor大，filter除了过滤请求外通过通配符可以保护页面、图片、文件等，而interceptor只能过滤请求，只对action起作用，在action之前开始，在action完成后结束（如被拦截，不执行action）； 
+  4. filter的过滤一般在加载的时候在init方法声明，而interceptor可以通过在xml声明是guest请求还是user请求来辨别是否过滤； 
+  5. interceptor可以访问action上下文、值栈里的对象，而filter不能； 
+  6. 在action的生命周期中，拦截器可以被多次调用，而过滤器只能在容器初始化时被调用一次。
+
