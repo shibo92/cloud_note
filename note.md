@@ -19,6 +19,7 @@
 * [过滤器（filter）和拦截器（interceptor）区别](#过滤器filter和拦截器interceptor区别)
 * [scp上传下载命令](#scp上传下载命令)
 * [mysql orderBy优化](#mysql-orderby优化)
+* [mysql突然无法登录（ERROR 1698 (28000): Access denied for user 'root'@'localhost'）](#mysql突然无法登录error-1698-28000-access-denied-for-user-rootlocalhost)
 
 <!-- vim-markdown-toc -->
 
@@ -164,3 +165,12 @@
   4. dubbo的开发难度较大，原因是dubbo的jar包依赖问题很多大型工程无法解决
   5. dubbo的注册中心可以选择zk,redis等多种，springcloud的注册中心只能用eureka或者自研
 
+### mysql突然无法登录（ERROR 1698 (28000): Access denied for user 'root'@'localhost'）
+  + 原因是mysq自动把插件改成了`auth_socket`；
+  + 解决方法： 
+	1. sudo 进入 mysql， 执行语句
+	```mysql
+    update mysql.user set authentication_string=PASSWORD(''), plugin='mysql_native_password' where user='root';
+	flush privileges;
+	```
+	2. 重启服务
