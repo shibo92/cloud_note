@@ -20,6 +20,7 @@
 * [scp上传下载命令](#scp上传下载命令)
 * [mysql orderBy优化](#mysql-orderby优化)
 * [mysql突然无法登录（ERROR 1698 (28000): Access denied for user 'root'@'localhost'）](#mysql突然无法登录error-1698-28000-access-denied-for-user-rootlocalhost)
+* [nohup只输出错误日志](#nohup只输出错误日志)
 
 <!-- vim-markdown-toc -->
 
@@ -174,3 +175,13 @@
 	flush privileges;
 	```
 	2. 重启服务
+
+### nohup只输出错误日志
+  +  nohup ./xxx.sh >/dev/null 2>xx.log &
+  + 关于Linux的3中重定向
+	- 0:表示标准输入
+    - 1:标准输出,在一般使用时，默认的是标准输出
+ 	- 2:标准错误信息输出
+  + 关于/dev/null文件
+	- Linux下还有一个特殊的文件/dev/null，它就像一个无底洞，所有重定向到它的信息都会消失得无影无踪。这一点非常有用，当我们不需要回显程序的所有信息时，就可以将输出重定向到/dev/null。
+
