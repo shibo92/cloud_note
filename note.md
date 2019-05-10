@@ -21,6 +21,9 @@
 * [mysql orderBy优化](#mysql-orderby优化)
 * [mysql突然无法登录（ERROR 1698 (28000): Access denied for user 'root'@'localhost'）](#mysql突然无法登录error-1698-28000-access-denied-for-user-rootlocalhost)
 * [nohup只输出错误日志](#nohup只输出错误日志)
+* [mybatis原理](#mybatis原理)
+* [解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)](#解决redis缓存雪崩问题多个key同时过期短暂时间内并发访问数据库造成雪崩)
+* [解决redis缓存穿透(多次请求为null的数据)](#解决redis缓存穿透多次请求为null的数据)
 
 <!-- vim-markdown-toc -->
 
@@ -167,10 +170,10 @@
   5. dubbo的注册中心可以选择zk,redis等多种，springcloud的注册中心只能用eureka或者自研
 
 ### mysql突然无法登录（ERROR 1698 (28000): Access denied for user 'root'@'localhost'）
-  + 原因是mysq自动把插件改成了`auth_socket`；
-  + 解决方法： 
+  + 原因是mysq自动把插件改成了"auth_socket"；
+  + 解决方法：
 	1. sudo 进入 mysql， 执行语句
-	```mysql
+	```
     update mysql.user set authentication_string=PASSWORD(''), plugin='mysql_native_password' where user='root';
 	flush privileges;
 	```
@@ -185,3 +188,41 @@
   + 关于/dev/null文件
 	- Linux下还有一个特殊的文件/dev/null，它就像一个无底洞，所有重定向到它的信息都会消失得无影无踪。这一点非常有用，当我们不需要回显程序的所有信息时，就可以将输出重定向到/dev/null。
 
+### mybatis原理
+  1. 创建SqlSessionFactory实例;
+  2. 实例化过程中，加载配置文件创建configuration对象(mybatis-config.xml);
+  3. 通过factory创建SqlSession对象,把configuaration传入SqlSession;
+  4. 通过SqlSession获取mapper接口动态代理; // UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+  5. 通过代理对调sqlsession中查询方法; // User user = mapper.findById(1);
+  6. sqlsession将查询方法转发给executor;
+  7. executor基于JDBC访问数据库获取数据;
+  8. executor通过反射将数据转换成POJO并返回给sqlsession;
+  9. 数据返回给调用者
+
+### 解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)
+  + 使用互斥锁
+    1. 当第一个线程进来发现redis没有指定的key
+    2. 则执行setNx(loke_key,"1")，然后去操作db
+    3. 其他线程进入后也发现redis没有指定的key，执行setNx，但是返回false，此时sleep(n)秒，再去get
+    4. 实现如下:
+    ```
+    String value = redis.get(key);  
+       if (value  == null) {  
+        if (redis.setnx(key_mutex, "1")) {  
+            // 3 min timeout to avoid mutex holder crash  
+            redis.expire(key_mutex, 3 * 60)  
+            value = db.get(key);  
+            redis.set(key, value);  
+            redis.delete(key_mutex);  
+        } else {  
+            //其他线程休息50毫秒后重试  
+            Thread.sleep(50);  
+            get(key);  
+        }  
+      }  
+    }  
+    ```
+   end
+
+### 解决redis缓存穿透(多次请求为null的数据)
+  + 简单粗暴 将value为null的key也存到redis
