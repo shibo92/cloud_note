@@ -24,6 +24,8 @@
 * [mybatis原理](#mybatis原理)
 * [解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)](#解决redis缓存雪崩问题多个key同时过期短暂时间内并发访问数据库造成雪崩)
 * [解决redis缓存穿透(多次请求为null的数据)](#解决redis缓存穿透多次请求为null的数据)
+* [高并发秒杀解决方案](#高并发秒杀解决方案)
+* [solr参数说明](#solr参数说明)
 
 <!-- vim-markdown-toc -->
 
@@ -223,6 +225,26 @@
     }  
     ```
    end
-
+ 
 ### 解决redis缓存穿透(多次请求为null的数据)
   + 简单粗暴 将value为null的key也存到redis
+
+### 高并发秒杀解决方案
+  + 转自知乎：https://www.zhihu.com/question/54895548
+
+### solr参数说明
+  + q : 查询字段，使用方式field:query_content，filed相当于sql中where后边的column,query_content相当于条件值
+  + dq: 过滤条件，在q的结果集中加一层过滤，也相当于where
+  + fl: 需要显示的field，相当于column
+  + start: 分页
+  + rows: 每页记录数
+  + sort: 排序
+  + wt: (writer type)指定输出格式，可以有 xml, json, php, phps。 
+  + fl: 表示索引显示那些field( *表示所有field,如果想查询指定字段用逗号或空格隔开（如：Name,SKU,ShortDescription或Name SKU ShortDescription【注：字段是严格区分大小写的】）) 
+  + q.op 表示q 中 查询语句的 各条件的逻辑操作 AND(与) OR(或) 
+  + hl 是否高亮 ,如hl=true
+  + hl.fl 高亮field ,hl.fl=Name,SKU
+  + hl.snippets :默认是1,这里设置为3个片段
+  + hl.simple.pre 高亮前面的格式 
+  + hl.simple.post 高亮后面的格式 
+  + facet 是否启动统计 
