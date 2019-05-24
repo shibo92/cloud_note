@@ -26,6 +26,7 @@
 * [解决redis缓存穿透(多次请求为null的数据)](#解决redis缓存穿透多次请求为null的数据)
 * [高并发秒杀解决方案](#高并发秒杀解决方案)
 * [solr参数说明](#solr参数说明)
+* [springmvc执行流程](#springmvc执行流程)
 
 <!-- vim-markdown-toc -->
 
@@ -248,3 +249,11 @@
   + hl.simple.pre 高亮前面的格式 
   + hl.simple.post 高亮后面的格式 
   + facet 是否启动统计 
+
+### springmvc执行流程
+  1. `DispatcherServlet`继承自`HttpServletBean`，首先要执行其中的init方法来初始化`web.xml`中的内容
+  2. 执行`doDispatch`方法（主要）
+  3. 通过request去一个`HandlerMappings`的List中获取对应的`mappedHandler`, 同时，`mappedHandler`会将请求封装成一个`HandlerMethod`，这个是最后要执行的类
+  4. 检查所有注册的`HandlerAdapter`，通过`mappedHandler`获取对应的`HandlerAdapter`
+  5. 通过执行`HandlerAdapter`的`handle`方法执行刚才拿到的`HandlerMethod`，返回一个ModelAndView
+  6. 调用viewResolver将mv的内容`out.write到客户端`
