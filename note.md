@@ -27,6 +27,7 @@
 * [高并发秒杀解决方案](#高并发秒杀解决方案)
 * [solr参数说明](#solr参数说明)
 * [springmvc执行流程](#springmvc执行流程)
+* [tomcat启动慢](#tomcat启动慢)
 
 <!-- vim-markdown-toc -->
 
@@ -257,3 +258,6 @@
   4. 检查所有注册的`HandlerAdapter`，通过`mappedHandler`获取对应的`HandlerAdapter`
   5. 通过执行`HandlerAdapter`的`handle`方法执行刚才拿到的`HandlerMethod`，返回一个ModelAndView
   6. 调用viewResolver将mv的内容`out.write到客户端`
+
+### tomcat启动慢
+  + 添加参数-Djava.security.egd=file:/dev/./urandom，加快随机数产生过程
