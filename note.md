@@ -256,6 +256,7 @@
   2. 执行`doDispatch`方法（主要）
   3. 通过request去一个`HandlerMappings`的List中获取对应的`mappedHandler`, 同时，`mappedHandler`会将请求封装成一个`HandlerMethod`，这个是最后要执行的类
   4. 检查所有注册的`HandlerAdapter`，通过`mappedHandler`获取对应的`HandlerAdapter`
+     - 执行HandlerAdapter之前会去执行相应的`Interceptor`，拦截器返回正常之后，才去执行下边的内容
   5. 通过执行`HandlerAdapter`的`handle`方法执行刚才拿到的`HandlerMethod`，返回一个ModelAndView
   6. 调用viewResolver将mv的内容`out.write到客户端`
 
