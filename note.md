@@ -28,6 +28,7 @@
 * [solr参数说明](#solr参数说明)
 * [springmvc执行流程](#springmvc执行流程)
 * [tomcat启动慢](#tomcat启动慢)
+* [spring的Beanfactory和ApplicationContext区别](#spring的beanfactory和applicationcontext区别)
 
 <!-- vim-markdown-toc -->
 
@@ -262,3 +263,7 @@
 
 ### tomcat启动慢
   + 添加参数-Djava.security.egd=file:/dev/./urandom，加快随机数产生过程
+
+### spring的Beanfactory和ApplicationContext区别
+  + beanfactory加载的bean只有用到的时候才会实例化（懒加载）
+  + ApplicationContext立即加载（finishBeanFactoryInitialization方法）
