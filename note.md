@@ -29,6 +29,7 @@
 * [springmvc执行流程](#springmvc执行流程)
 * [tomcat启动慢](#tomcat启动慢)
 * [spring的Beanfactory和ApplicationContext区别](#spring的beanfactory和applicationcontext区别)
+* [mybatis有则更新，无则插入的关键字](#mybatis有则更新无则插入的关键字)
 
 <!-- vim-markdown-toc -->
 
@@ -267,3 +268,7 @@
 ### spring的Beanfactory和ApplicationContext区别
   + beanfactory加载的bean只有用到的时候才会实例化（懒加载）
   + ApplicationContext立即加载（finishBeanFactoryInitialization方法）
+
+### mybatis有则更新，无则插入的关键字
+  + ON DUPLICATE KEY UPDATE 
+  + link: https://segmentfault.com/p/1210000020019645
