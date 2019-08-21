@@ -280,4 +280,6 @@
     1. ArrayBlockingQueue：基于数组的先进先出队列，此队列创建时必须指定大小； 
     2. LinkedBlockingQueue：基于链表的先进先出队列，如果创建时没有指定此队列大小，则默认为Integer.MAX_VALUE；
     3. synchronousQueue：这个队列比较特殊，它不会保存提交的任务，而是将直接新建一个线程来执行新来的任务。
+  + 根据《阿里编码规约》，Executors创建的线程池都是Linked方式或Synchronous方式，所以建议使用`ThreadPoolExecutor`手动创建线程池,并设置workQueue为`ArrayBlockingQueue`
+
 
