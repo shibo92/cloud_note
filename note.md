@@ -30,6 +30,7 @@
 * [tomcat启动慢](#tomcat启动慢)
 * [spring的Beanfactory和ApplicationContext区别](#spring的beanfactory和applicationcontext区别)
 * [mybatis有则更新，无则插入的关键字](#mybatis有则更新无则插入的关键字)
+* [线程池任务队列(workQueue)](#线程池任务队列workqueue)
 
 <!-- vim-markdown-toc -->
 
@@ -272,3 +273,11 @@
 ### mybatis有则更新，无则插入的关键字
   + ON DUPLICATE KEY UPDATE 
   + link: https://segmentfault.com/p/1210000020019645
+
+### 线程池任务队列(workQueue)
+4.任务缓存队列及排队策略 
+  + workQueue的类型为BlockingQueue，通常可以取下面三种类型：
+    1. ArrayBlockingQueue：基于数组的先进先出队列，此队列创建时必须指定大小； 
+    2. LinkedBlockingQueue：基于链表的先进先出队列，如果创建时没有指定此队列大小，则默认为Integer.MAX_VALUE；
+    3. synchronousQueue：这个队列比较特殊，它不会保存提交的任务，而是将直接新建一个线程来执行新来的任务。
+
