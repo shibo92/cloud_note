@@ -284,8 +284,9 @@
   + 根据《阿里编码规约》，Executors创建的线程池都是Linked方式或Synchronous方式，所以建议使用`ThreadPoolExecutor`手动创建线程池,并设置workQueue为`ArrayBlockingQueue`
  
 ### 线程池拒绝策略
-  1. DiscardPolicy: 直接丢弃任务，不抛出异常。
-  2. AbortPolicy: 丢弃任务并抛出RejectedExecutionException异常。
+  1. AbortPolicy: 丢弃任务并抛出RejectedExecutionException异。(默认)
+  2. DiscardPolicy: 直接丢弃任务，不抛出异常。
   3. DiscardOldestPolicy：丢弃队列最前面的任务，执行后面的任务
   4. CallerRunsPolicy：由调用线程处理该任务 
+
 
