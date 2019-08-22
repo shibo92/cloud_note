@@ -31,6 +31,7 @@
 * [spring的Beanfactory和ApplicationContext区别](#spring的beanfactory和applicationcontext区别)
 * [mybatis有则更新，无则插入的关键字](#mybatis有则更新无则插入的关键字)
 * [线程池任务队列(workQueue)](#线程池任务队列workqueue)
+* [线程池拒绝策略](#线程池拒绝策略)
 
 <!-- vim-markdown-toc -->
 
@@ -281,5 +282,10 @@
     2. LinkedBlockingQueue：基于链表的先进先出队列，如果创建时没有指定此队列大小，则默认为Integer.MAX_VALUE；
     3. synchronousQueue：这个队列比较特殊，它不会保存提交的任务，而是将直接新建一个线程来执行新来的任务。
   + 根据《阿里编码规约》，Executors创建的线程池都是Linked方式或Synchronous方式，所以建议使用`ThreadPoolExecutor`手动创建线程池,并设置workQueue为`ArrayBlockingQueue`
-
+ 
+### 线程池拒绝策略
+  1. DiscardPolicy: 直接丢弃任务，不抛出异常。
+  2. AbortPolicy: 丢弃任务并抛出RejectedExecutionException异常。
+  3. DiscardOldestPolicy：丢弃队列最前面的任务，执行后面的任务
+  4. CallerRunsPolicy：由调用线程处理该任务 
 
