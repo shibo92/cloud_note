@@ -3,8 +3,10 @@
 
 * [java内存区域](#java内存区域)
 * [eden和survivor回收过程](#eden和survivor回收过程)
+	* [一个对象的这一辈子](#一个对象的这一辈子)
 * [类的初始化步骤](#类的初始化步骤)
 * [jstat -gcutil 命令使用](#jstat--gcutil-命令使用)
+* [jvm常用命令](#jvm常用命令)
 
 <!-- vim-markdown-toc -->
 ### java内存区域
@@ -24,7 +26,7 @@
 ### eden和survivor回收过程
   在GC开始的时候，对象只会存在于Eden区和名为“From”的Survivor区，Survivor区“To”是空的。紧接着进行GC，Eden区中所有存活的对象都会被复制到“To”，而在“From”区中，仍存活的对象会根据他们的年龄值来决定去向。年龄达到一定值(年龄阈值，可以通过-XX:MaxTenuringThreshold来设置)的对象会被移动到年老代中，没有达到阈值的对象会被复制到“To”区域。经过这次GC后，Eden区和From区已经被清空。这个时候，“From”和“To”会交换他们的角色，也就是新的“To”就是上次GC前的“From”，新的“From”就是上次GC前的“To”。不管怎样，都会保证名为To的Survivor区域是空的。Minor GC会一直重复这样的过程，直到“To”区被填满，“To”区被填满之后，会将所有对象移动到年老代中。
 
- #### 一个对象的这一辈子
+#### 一个对象的这一辈子
 我是一个普通的Java对象，我出生在Eden区，在Eden区我还看到和我长的很像的小兄弟，我们在Eden区中玩了挺长时间。有一天Eden区中的人实在是太多了，我就被迫去了Survivor区的“From”区，自从去了Survivor区，我就开始漂了，有时候在Survivor的“From”区，有时候在Survivor的“To”区，居无定所。直到我18岁的时候，爸爸说我成人了，该去社会上闯闯了。于是我就去了年老代那边，年老代里，人很多，并且年龄都挺大的，我在这里也认识了很多人。在年老代里，我生活了20年(每次GC加一岁)，然后被回收。
 
 ### 类的初始化步骤
@@ -50,3 +52,8 @@
   + FGCT: 从应用程序启动到当前，Full GC所用的时间
   + GCT: 从应用程序启动到当前，用于垃圾回收的总时间【单位秒】
 
+### jvm常用命令
+  + jps命令(Java Virtual Machine Process Status Tool)
+  + jstack命令(Java Stack Trace) - 打印堆栈信息
+  + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - 监控jvm
+  + jmap命令(Java Memory Map) - 打印java进程所有‘对象’情况,产生了哪些些对象，及其数量(jmap -heap)
