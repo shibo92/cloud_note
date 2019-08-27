@@ -4,6 +4,7 @@
 * [java内存区域](#java内存区域)
 * [eden和survivor回收过程](#eden和survivor回收过程)
 * [类的初始化步骤](#类的初始化步骤)
+* [jstat -gcutil 命令使用](#jstat--gcutil-命令使用)
 
 <!-- vim-markdown-toc -->
 ### java内存区域
@@ -28,3 +29,24 @@
 
 ### 类的初始化步骤
 加载 --> 验证 --> 准备 --> 解析 --> 初始化 --> 使用 --> 卸载
+
+### jstat -gcutil 命令使用
+  + 命令格式 jstat -gcutil pid interval(ms)
+  + eg: jstat -gcutil  16361 1000
+   print:	
+   ```
+      $ jstat -gcutil 12691 1000
+      S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT 
+      81.51   0.00   2.57  66.64  94.58  91.30   5730   60.270     4    1.343   61.612
+   ```  
+  + S0: 新生代中Survivor space 0区已使用空间的百分比
+  + S1: 新生代中Survivor space 1区已使用空间的百分比
+  + E: 新生代已使用空间的百分比
+  + O: 老年代已使用空间的百分比
+  + P: 永久带已使用空间的百分比
+  + YGC: 从应用程序启动到当前，发生Yang GC 的次数
+  + YGCT: 从应用程序启动到当前，Yang GC所用的时间【单位秒】
+  + FGC: 从应用程序启动到当前，发生Full GC的次数
+  + FGCT: 从应用程序启动到当前，Full GC所用的时间
+  + GCT: 从应用程序启动到当前，用于垃圾回收的总时间【单位秒】
+

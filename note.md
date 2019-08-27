@@ -32,6 +32,8 @@
 * [mybatis有则更新，无则插入的关键字](#mybatis有则更新无则插入的关键字)
 * [线程池任务队列(workQueue)](#线程池任务队列workqueue)
 * [线程池拒绝策略](#线程池拒绝策略)
+* [ubuntu 修改wine分辨率](#ubuntu-修改wine分辨率)
+* [scp上传下载](#scp上传下载)
 
 <!-- vim-markdown-toc -->
 
@@ -229,9 +231,8 @@
         }  
       }  
     }  
-    ```
-   end
- 
+    ``` 
+
 ### 解决redis缓存穿透(多次请求为null的数据)
   + 简单粗暴 将value为null的key也存到redis
 
@@ -272,7 +273,7 @@
   + ApplicationContext立即加载（finishBeanFactoryInitialization方法）
 
 ### mybatis有则更新，无则插入的关键字
-  + ON DUPLICATE KEY UPDATE 
+   + ON DUPLICATE KEY UPDATE 
   + link: https://segmentfault.com/p/1210000020019645
 
 ### 线程池任务队列(workQueue)
@@ -289,4 +290,17 @@
   3. DiscardOldestPolicy：丢弃队列最前面的任务，执行后面的任务
   4. CallerRunsPolicy：由调用线程处理该任务 
 
+### ubuntu 修改wine分辨率
+ + WINEPREFIX=~/.deepinwine/Deepin-WeChat deepin-wine winecfg
+
+### scp上传下载
+ + scp [参数] [原路径] [目标路径]
+  - 上传
+  命令格式：scp local_file remote_username@remote_ip:remote_folder 
+  例如： scp  -P 40022 /Users/shibo/local/huawei_unsigned_signed.apk root@ip:/home/qiban/bzit_app/
+  - 下载
+  例如： scp root@ip:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
+  参数：-v 查看进度 
+        -P 端口
+        -r 传输目录
 
