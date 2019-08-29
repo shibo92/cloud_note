@@ -7,6 +7,7 @@
 * [类的初始化步骤](#类的初始化步骤)
 * [jstat -gcutil 命令使用](#jstat--gcutil-命令使用)
 * [jvm常用命令](#jvm常用命令)
+* [导出dump文件并分析](#导出dump文件并分析)
 
 <!-- vim-markdown-toc -->
 ### java内存区域
@@ -57,3 +58,9 @@
   + jstack命令(Java Stack Trace) - 打印堆栈信息
   + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - 监控jvm
   + jmap命令(Java Memory Map) - 打印java进程所有‘对象’情况,产生了哪些些对象，及其数量(jmap -heap)
+
+### 导出dump文件并分析
+  1. jmap -dump:format=b,file=tttmp.dump pid
+  2. scp下载到本地
+  3. 使用jvisualvm分析dump文件
+

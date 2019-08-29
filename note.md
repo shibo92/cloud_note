@@ -34,6 +34,7 @@
 * [线程池拒绝策略](#线程池拒绝策略)
 * [ubuntu 修改wine分辨率](#ubuntu-修改wine分辨率)
 * [scp上传下载](#scp上传下载)
+* [内存模型(JMM)](#内存模型jmm)
 
 <!-- vim-markdown-toc -->
 
@@ -304,3 +305,6 @@
         -P 端口
         -r 传输目录
 
+###内存模型(JMM)
+  + 了保证并发编程中可以满足原子性、可见性及有序性。有一个重要的概念，那就是——内存模型
+  + 关键字：volatile、synchronized、final、concurren
