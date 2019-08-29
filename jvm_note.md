@@ -60,7 +60,7 @@
   + jmap命令(Java Memory Map) - 打印java进程所有‘对象’情况,产生了哪些些对象，及其数量(jmap -heap)
 
 ### 导出dump文件并分析
-  1. jmap -dump:format=b,file=tttmp.dump pid
+  1. jmap -dump:format=b,file=xx.dump pid
   2. scp下载到本地
   3. 使用jvisualvm分析dump文件
-
+  4. chmod a+r xx.dump
