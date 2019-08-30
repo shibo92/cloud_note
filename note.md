@@ -87,7 +87,7 @@
 + Lock锁适合大量同步的代码的同步问题，synchronized锁适合代码少量的同步问题
 
 ### String类为什么是final的
-+ 只有当字符串是不可变的，字符串池才有可能实现。字符串池的实现可以在运行时节约很多heap空间，因为不同的字符串变量都指向池中的同一个字符串。但如果字符串是可变的，那么String interning将不能实现，因为这样的话，如果变量改变了它的值，那么其它指向这个值的变量的值也会一起改变。
++ 只有当字符串是不可变的，字符串池才有可能实现。字符串池的实现可以在运行时节约很多heap空间，因为不同的字符串变量都指向池中的同一个字符串。但如果字符串是可变的，那么String intern将不能实现，因为这样的话，如果变量改变了它的值，那么其它指向这个值的变量的值也会一起改变。
 + 因为字符串是不可变的，所以是多线程安全的，同一个字符串实例可以被多个线程共享。这样便不用因为线程安全问题而使用同步。字符串自己便是线程安全的。
 + 因为字符串是不可变的，所以在它创建的时候HashCode就被缓存了，不需要重新计算。这就使得字符串很适合作为Map中的键，字符串的处理速度要快过其它的键对象。这就是HashMap中的键往往都使用字符串。
 
@@ -149,13 +149,13 @@
 
 ### mysql orderBy优化
   问题 select * from t where xxx limit xx,xx 加上orderBy之后查询速度下降。
-  
+
   慢的原因主要是排序，尤其是分片的排序，
   mycat会在所有分片进行排序操作取limit50，然后在mycat内存中再次排序取limit50
   如果不排序的话，mycat只需要随便取一个分片的50条即可，这个计算量差别是很大的，分片越多越慢
   按主键排序的话，innodb的索引是带有主键的，
   所以where加order是可以走索引（覆盖索引），前提是select不能有索引字段以外的列
-  
+
   解决方案：
   1、加索引
   2、嵌套一个子查询，只用来查询有索引的字段
@@ -169,7 +169,6 @@
   (select id FROM eis_email_history WHERE AppName = 21 AND custidStatus IN (0, 1, 2) AND channel = '*' 
   ORDER BY id DESC LIMIT 50
   ) b on a.id=b.id;
-  
   链接地址：https://explainextended.com/2010/08/24/20-latest-unique-records/
 
   1. dubbo暴露的是service层的接口，使用的方式为：消费者的controller层调用服务提供者的service.
