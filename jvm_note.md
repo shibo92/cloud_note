@@ -8,6 +8,7 @@
 * [jstat -gcutil 命令使用](#jstat--gcutil-命令使用)
 * [jvm常用命令](#jvm常用命令)
 * [导出dump文件并分析](#导出dump文件并分析)
+* [jstack定位到线程](#jstack定位到线程)
 
 <!-- vim-markdown-toc -->
 ### java内存区域
@@ -34,7 +35,7 @@
 加载 --> 验证 --> 准备 --> 解析 --> 初始化 --> 使用 --> 卸载
 
 ### jstat -gcutil 命令使用
-  + 命令格式 jstat -gcutil pid interval(ms)
+   + 命令格式 jstat -gcutil pid interval(ms)
   + eg: jstat -gcutil  16361 1000
    print:	
    ```
@@ -46,7 +47,7 @@
   + S1: 新生代中Survivor space 1区已使用空间的百分比
   + E: 新生代已使用空间的百分比
   + O: 老年代已使用空间的百分比
-  + P: 永久带已使用空间的百分比
+  + P/M: 永久带已使用空间的百分比
   + YGC: 从应用程序启动到当前，发生Yang GC 的次数
   + YGCT: 从应用程序启动到当前，Yang GC所用的时间【单位秒】
   + FGC: 从应用程序启动到当前，发生Full GC的次数
@@ -55,12 +56,17 @@
 
 ### jvm常用命令
   + jps命令(Java Virtual Machine Process Status Tool)
-  + jstack命令(Java Stack Trace) - 打印堆栈信息
-  + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - 监控jvm
+  + jstack命令(Java Stack Trace) - 跟踪线程信息
+  + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - jvm统计检测
   + jmap命令(Java Memory Map) - 打印java进程所有‘对象’情况,产生了哪些些对象，及其数量(jmap -heap)
-
+ 
 ### 导出dump文件并分析
   1. jmap -dump:format=b,file=xx.dump pid
   2. scp下载到本地
   3. 使用jvisualvm分析dump文件
   4. chmod a+r xx.dump
+
+### jstack定位到线程
+  + top -Hp pid或ps找到线程pid
+  + printf "%x\n" 21742 将pid转换成十六进制
+  + jstack 进程pid |grep 线程pid 
