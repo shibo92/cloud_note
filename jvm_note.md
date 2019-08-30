@@ -57,7 +57,7 @@
 ### jvm常用命令
   + jps命令(Java Virtual Machine Process Status Tool)
   + jstack命令(Java Stack Trace) - 跟踪线程信息
-  + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - jvm统计检测
+  + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - 主要查看GC信息和jvm内存信息(jstat -gcutil pid)
   + jmap命令(Java Memory Map) - 打印java进程所有‘对象’情况,产生了哪些些对象，及其数量(jmap -heap)
  
 ### 导出dump文件并分析
