@@ -37,6 +37,9 @@
 * [内存模型(JMM)](#内存模型jmm)
 * [mysql索引最左匹配原则的理解](#mysql索引最左匹配原则的理解)
 * [URI和URL](#uri和url)
+* [activemq发布订阅保证消息可靠](#activemq发布订阅保证消息可靠)
+* [activemq保证顺序](#activemq保证顺序)
+* [线程还没执行完,redis锁已经过期了怎么办](#线程还没执行完redis锁已经过期了怎么办)
 
 <!-- vim-markdown-toc -->
 
@@ -305,7 +308,7 @@
   参数：-v 查看进度 
         -P 端口
         -r 传输目录
-
+ 
 ### 内存模型(JMM)
   + 了保证并发编程中可以满足原子性、可见性及有序性。有一个重要的概念，那就是——内存模型
   + 关键字：volatile、synchronized、final、concurren
@@ -318,3 +321,14 @@
   + URI只要可以标记一个资源就可以，不管是以什么方式，比如urn:isbn:0-486-27557-4，这个是一本书的isbn
   + URL就是使用服务器路径来定位一个资源
 
+### activemq发布订阅保证消息可靠
+  + 这个情况比较多，理论来说使用topic 加持久化可保证服务器消息可靠，客户端使用Producer.DeliveryMode = MsgDeliveryMode.Persistent，来保证客户端消息持久化
+
+### activemq保证顺序
+  + 通过高级特性consumer独有消费者（exclusive consumer）
+  + 利用Activemq的高级特性：messageGroups
+
+### 线程还没执行完,redis锁已经过期了怎么办
+  1. 假如某线程成功得到了锁，并且设置的超时时间是30秒。当A线程还未执行完，锁已被释放
+  2. B线程创建锁并执行完毕，并将锁删除，此时删除的是线程B加上的锁
+  3. 如何避免：可以在del释放锁之前做一个判断，验证当前的锁的value是不是自己加的锁。加锁的时候把当前的线程ID当做value，并在删除之前验证key对应的value是不是自己线程的ID。
