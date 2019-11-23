@@ -41,6 +41,8 @@
 * [activemq保证顺序](#activemq保证顺序)
 * [线程还没执行完,redis锁已经过期了怎么办](#线程还没执行完redis锁已经过期了怎么办)
 * [ubuntu自定义桌面应用路径](#ubuntu自定义桌面应用路径)
+* [dubbo加载配置文件标签](#dubbo加载配置文件标签)
+* [zip乱码解决方案](#zip乱码解决方案)
 
 <!-- vim-markdown-toc -->
 
@@ -336,3 +338,10 @@
 
 ### ubuntu自定义桌面应用路径
   + /usr/share/application
+
+### dubbo加载配置文件标签
+  1. 通过DubboNamespaceHandler初始化各种标签对应的处理类（Parser）
+  2. 由各自的处理类去做转换，比如`DubboBeanDefinitionParser`
+
+### zip乱码解决方案
+  +  unzip -O GBK xxx.zip
