@@ -43,6 +43,7 @@
 * [ubuntu自定义桌面应用路径](#ubuntu自定义桌面应用路径)
 * [dubbo加载配置文件标签](#dubbo加载配置文件标签)
 * [zip乱码解决方案](#zip乱码解决方案)
+* [B站学习资源](#b站学习资源)
 
 <!-- vim-markdown-toc -->
 
@@ -304,11 +305,11 @@
 ### scp上传下载
  + scp [参数] [原路径] [目标路径]
   - 上传
-  命令格式：scp local_file remote_username@remote_ip:remote_folder 
-  例如： scp  -P 40022 /Users/shibo/local/huawei_unsigned_signed.apk root@ip:/home/qiban/bzit_app/
+   1. 命令格式：scp local_file remote_username@remote_ip:remote_folder 
+   2. 例如： scp  -P 40022 /Users/shibo/local/huawei_unsigned_signed.apk root@ip:/home/qiban/bzit_app/
   - 下载
-  例如： scp root@ip:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
-  参数：-v 查看进度 
+   1. 例如： scp root@ip:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
+   2. 参数：-v 查看进度 
         -P 端口
         -r 传输目录
  
@@ -344,4 +345,56 @@
   2. 由各自的处理类去做转换，比如`DubboBeanDefinitionParser`
 
 ### zip乱码解决方案
-  +  unzip -O GBK xxx.zip
+  + unzip -O GBK xxx.zip
+
+### B站学习资源
+ + 【基础阶段】
+   - Java基础:av48144058
+   - Java12&13:av68735735
+   - IDEA:av30080993
+   - MySQL:av21400736
+   - Oracle:av21400096
+   - JDBC:av67955358
+   - Linux:av21597782
+   - 数据结构和算法:av54029771
+   - 设计模式:av57936239
+
+ + 【Web阶段】
+   - JS DOM:av21397977
+   - jQuery:av21397842
+   - Ajax:av21373626
+   - JavaWeb:av21367011
+   - 书城案例:av21366253
+
+ + 【JavaEE】
+   - Struts2:av21336277
+   - Hibernate4:av21335712
+   - Spring4:av21335209
+   - SSH整合:av27201253
+   - SVN:av21270976
+   - SVN高级:av27204378
+   - Maven:av21004567
+   - SpringMVC:av21272240
+   - JPA:av21263089
+   - SpringData:av21083608
+   - SSSP整合:av21084229
+   - Redis:av20974126
+   - Shiro:av21260992
+   - MySQL高级:av21334868
+   - MyBatis:av21272940
+   - MyBatisPlus:av27212529
+   - Mapper:av21297807
+   - SSM整合:av21045215
+   - RBAC:av23768626
+   - Spring注解:av20967380
+   - SpringBoot:av20965295
+   - SpringBoot整合:av23284778
+   - SpringCloud:av22623176
+   - Git&GitHub:av24441039
+   - Jenkins:av24735835
+   - Docker:av26993050
+   - Dubbo:av30612478
+   - ActiveMQ:av55976700
+   - Nginx:av68136734
+   - 经典面试题:av35040927
+   - 大厂面试题:av48961087
