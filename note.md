@@ -46,6 +46,10 @@
 * [B站学习资源](#b站学习资源)
 * [学习方法论](#学习方法论)
 * [eureka缓存机制](#eureka缓存机制)
+* [系统异常监控sentry](#系统异常监控sentry)
+* [mysql or查询不生效](#mysql-or查询不生效)
+* [mysql 表demo](#mysql-表demo)
+* [CAS存在的问题](#cas存在的问题)
 
 <!-- vim-markdown-toc -->
 
@@ -414,3 +418,19 @@
    2. `readWriteCacheMap` 缓存过期时间，默认为 180 秒，当服务下线、过期、注册、状态变更，都会来清除此缓存中的数据;
  + Eureka Client 获取全量或者增量的数据时，会先从一级缓存中获取；如果一级缓存中不存在，再从二级缓存中获取；如果二级缓存也不存在，这时候先将存储层的数据同步到缓存中，再从缓存中获取。
  + 这样做可以提高节点获取数据时的响应效率
+
+### 系统异常监控sentry
+### mysql or查询不生效
+ 1. 使用union代替or
+ 2. 可能是表数据量太小，mysql有索引优化，详见：https://dev.mysql.com/doc/refman/5.6/en/index-merge-optimization.html
+
+### mysql 表demo
+ + git clone git@github.com:datacharmer/test_db.git
+
+### CAS存在的问题
+ 1. ABA问题
+   + 原值为A，改为B，又改回A，CAS检测时会认为没有变化。
+   + 解决方案：修改时加版本号，如：1A->2B->3A
+ 2. 循环开销时间大
+ 3. 只能保证一个共享变量的原子操作，无法保证多个变量的原子性
+   + jdk1.5提供了AtomicRefrence类，可以吧多个变量放在一个对象里进行cas操作
