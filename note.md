@@ -48,8 +48,18 @@
 * [eureka缓存机制](#eureka缓存机制)
 * [系统异常监控sentry](#系统异常监控sentry)
 * [mysql or查询不生效](#mysql-or查询不生效)
-* [mysql 表demo](#mysql-表demo)
+* [mysql-Employees Sample table download](#mysql-employees-sample-table-download)
 * [CAS存在的问题](#cas存在的问题)
+* [自旋锁](#自旋锁)
+* [事务隔离级别](#事务隔离级别)
+* [聚簇索引和非聚簇索引](#聚簇索引和非聚簇索引)
+* [将vim复制的内容粘贴到vim之外](#将vim复制的内容粘贴到vim之外)
+* [组合和聚合](#组合和聚合)
+* [各类加载器执行的目录](#各类加载器执行的目录)
+* [提高反射性能](#提高反射性能)
+* [字段基数和索引效率的关系](#字段基数和索引效率的关系)
+* [通过跳板机上传/下载文件](#通过跳板机上传下载文件)
+* [loadClass和class.forName在虚拟机层面的区别](#loadclass和classforname在虚拟机层面的区别)
 
 <!-- vim-markdown-toc -->
 
@@ -424,7 +434,8 @@
  1. 使用union代替or
  2. 可能是表数据量太小，mysql有索引优化，详见：https://dev.mysql.com/doc/refman/5.6/en/index-merge-optimization.html
 
-### mysql 表demo
+### mysql-Employees Sample table download
+ + https://dev.mysql.com/doc/employee/en/employees-installation.html
  + git clone git@github.com:datacharmer/test_db.git
 
 ### CAS存在的问题
@@ -434,3 +445,58 @@
  2. 循环开销时间大
  3. 只能保证一个共享变量的原子操作，无法保证多个变量的原子性
    + jdk1.5提供了AtomicRefrence类，可以吧多个变量放在一个对象里进行cas操作
+### 自旋锁
+ 1. 避免了线程切换的开销
+ 2. 如果锁的占用时间很短，很适合用自旋锁，反之则不合适
+ 3. 自旋锁实现原理同样是cas，AtomicInteger中调用unsafe进行自增操作就是自旋锁`unsafe.getAndAddInt`，源码中是一个do-while循环, unsafe-->直接读内存
+### 事务隔离级别
+ 1. 未提交读(read-committed): 事务A未提交，事务B可读取A中已修改的内容
+ 2. 提交读(read-committed): 事务A提交后，事务B未提交，可看到A中刚修改的内容
+ 3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
+ 4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
+### 聚簇索引和非聚簇索引
+ + 聚簇索引(InnoDB): 
+   - 非叶子节点存储索引列，叶子节点存储数据，二级索引(辅助索引)为非聚簇索引，叶子节点存储聚簇索引列
+   - 优点
+     1. 移动行时二级索引无需更新，因为二级索引维护的是对应的id
+   - 缺点
+     1. 更新聚簇列时，会强制移动被更新的行数据到新的位置，因为索引位置变了，数据必须跟着移动
+ + 非聚簇索引
+   - 非叶子节点存储索引列，叶子节点存储数据行的物理地址
+### 将vim复制的内容粘贴到vim之外
+ + 同时按下 shift " + y 四个按键
+
+### 组合和聚合
+ + 组合
+   - 人和手脚、头部。人消失后其他也消失
+   - 组合符号是空心菱形
+ + 聚合
+   - 人和电脑。人消失后电脑还存在，电脑是通过set方法聚合到人这个类当中的。
+   - 聚合符号是实心菱形
+### 各类加载器执行的目录
+ + BootStrapClassLoader - $JAVA_HOME/jre/lib/rt.jar或者自定义/jre/classes
+ + Extension ClassLoader - $JAVA_HOME/jre/lib/ext/classes
+ + Application ClassLoader - 用户类所在路径(classpath)
+### 提高反射性能
+ + 反射后加入到缓存当中，避免forName的耗时
+ + setAccessible(true) - 禁用安全检查
+### 字段基数和索引效率的关系
+ + count(DISTINCT(column))/count(*) 越大，索引效果越好
+
+### 通过跳板机上传/下载文件
+ + install zssh
+ + 用类似ssh的方式连接服务器：zssh username@ip
+ + 上传文件
+   - 先用组合键ctrl+2进入zssh：
+   - zssh > ls // 看一下有哪些文件，可以用shell命令切换文件夹等
+   - zssh > sz abc.py // 将abc.py传到远程机器当前目录下
+ + 下载文件，在服务器上：
+   - sz abcde.py // 准备好要下载的文件
+   - 然后ctrl+2进入zssh：
+   - zssh > ls // 选择下载到的目录
+   - zssh > rz // 下载对应的文件
+
+### loadClass和class.forName在虚拟机层面的区别
+ + Class.forName(className)装载的class已经被初始化，也就是到了类加载的初始化阶段
+ + ClassLoader.loadClass(className)装载的class还没有被link
+ + https://blog.csdn.net/dataiyangu/article/details/86321678
