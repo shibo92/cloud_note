@@ -9,6 +9,7 @@
 * [jvm常用命令](#jvm常用命令)
 * [导出dump文件并分析](#导出dump文件并分析)
 * [jstack定位到线程](#jstack定位到线程)
+* [jvm调优常用参数](#jvm调优常用参数)
 
 <!-- vim-markdown-toc -->
 ### java内存区域
@@ -70,3 +71,17 @@
   + top -Hp pid或ps找到线程pid
   + printf "%x\n" 21742 将pid转换成十六进制
   + jstack 进程pid |grep 线程pid 
+
+### jvm调优常用参数
+  + jmap
+    - jmap -heap pid
+    - jmap -dump:format=b,file=heapdump.phrof pid
+    - jmap -histo:live pid
+  + jstat
+    - jstat -gc pid 5000 显示gc的信息,查看gc的次数,及时间，每5秒刷新一次
+    - jstat -gcutil pid 统计gc信息
+  + jatack
+    - jstack pid > /home/xxx/dump17 导出线程文件
+    - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort | uniq -c 统计线程状态
+    - jstack -l pid > jstack.log 导出线程日志
+    - cat jstack.log | grep "java.lang.Thread.State" | sort -nr | uniq -c
