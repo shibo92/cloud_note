@@ -66,6 +66,7 @@
 * [代理模式和适配器模式和装饰者模式区别](#代理模式和适配器模式和装饰者模式区别)
 * [红黑树和avl树区别](#红黑树和avl树区别)
 * [查看redis哨兵master的ip和端口](#查看redis哨兵master的ip和端口)
+* [vim保存readonly文件](#vim保存readonly文件)
 
 <!-- vim-markdown-toc -->
 
@@ -539,5 +540,5 @@
 ### 查看redis哨兵master的ip和端口
   1. telnet host port
   2. 执行 info 命令 查看 主机ip ，用主机的 ip 和端口连接
-
-
+### vim保存readonly文件
+  1. :w !sudo tee %
