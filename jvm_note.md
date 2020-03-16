@@ -10,6 +10,8 @@
 * [导出dump文件并分析](#导出dump文件并分析)
 * [jstack定位到线程](#jstack定位到线程)
 * [jvm调优常用参数](#jvm调优常用参数)
+* [JVM主动使用的场景](#jvm主动使用的场景)
+* [常量何时进入常量池](#常量何时进入常量池)
 
 <!-- vim-markdown-toc -->
 ### java内存区域
@@ -85,3 +87,16 @@
     - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort | uniq -c 统计线程状态
     - jstack -l pid > jstack.log 导出线程日志
     - cat jstack.log | grep "java.lang.Thread.State" | sort -nr | uniq -c
+### JVM主动使用的场景
+  1. 创建类的实例
+  2. 访问类或接口的静态变量，或对静态变量赋值
+  3. 调用类的静态方法
+  4. 反射(Class.forName)
+  5. 初始化其子类
+  6. 被标明为启动类的类(main、test)
+ 
+### 常量何时进入常量池
+  1. 编译时，jvm会将常量放入引用类的常量池中
+  2. 编译期不确定的值，比如uuid，是不会进入常量池的
+
+
