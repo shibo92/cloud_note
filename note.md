@@ -537,8 +537,18 @@
 ### 红黑树和avl树区别
   1. 红黑树在左右平衡上非严格
   2. 减少了旋转次数
+
 ### 查看redis哨兵master的ip和端口
   1. telnet host port
   2. 执行 info 命令 查看 主机ip ，用主机的 ip 和端口连接
+
 ### vim保存readonly文件
   1. :w !sudo tee %
+
+### junit
+ + Deencapsulation 可以访问类的私有方法和属性
+ + new Expectations() 可以构造预期结果
+
+### zookeeper超时时间
+ + 服务器在经过时间t之后收不到客户端的消息，则认为回话过期；
+ + 而客户端在经过t/3时间后未收到服务器消息，就会向服务器发送心跳包；在经过2t/3之后，客户端会寻找其他服务器，此时还剩t/3时间去寻找和发包；
