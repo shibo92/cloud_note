@@ -1,75 +1,3 @@
-
-<!-- vim-markdown-toc GFM -->
-
-* [责任链模式](#责任链模式)
-* [springcloud 和 dubbo的区别](#springcloud-和-dubbo的区别)
-* [分布式-微服务-集群的区别](#分布式-微服务-集群的区别)
-* [mysql orderBy的优化](#mysql-orderby的优化)
-* [redis两种持久化方式](#redis两种持久化方式)
-* [Lock 和 Synchronized区别](#lock-和-synchronized区别)
-* [String类为什么是final的](#string类为什么是final的)
-* [对象类型数据和实例数据](#对象类型数据和实例数据)
-* [java永久代](#java永久代)
-* [redis和db一致性解决方案](#redis和db一致性解决方案)
-* [http解析流程](#http解析流程)
-* [class.forName()和classLoader区别](#classforname和classloader区别)
-* [redis i/o多路复用](#redis-io多路复用)
-* [对象进入老年代的条件](#对象进入老年代的条件)
-* [mysql主从同步的工作过程](#mysql主从同步的工作过程)
-* [过滤器（filter）和拦截器（interceptor）区别](#过滤器filter和拦截器interceptor区别)
-* [scp上传下载命令](#scp上传下载命令)
-* [mysql orderBy优化](#mysql-orderby优化)
-* [mysql突然无法登录（ERROR 1698 (28000): Access denied for user 'root'@'localhost'）](#mysql突然无法登录error-1698-28000-access-denied-for-user-rootlocalhost)
-* [nohup只输出错误日志](#nohup只输出错误日志)
-* [mybatis原理](#mybatis原理)
-* [解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)](#解决redis缓存雪崩问题多个key同时过期短暂时间内并发访问数据库造成雪崩)
-* [解决redis缓存穿透(多次请求为null的数据)](#解决redis缓存穿透多次请求为null的数据)
-* [高并发秒杀解决方案](#高并发秒杀解决方案)
-* [solr参数说明](#solr参数说明)
-* [springmvc执行流程](#springmvc执行流程)
-* [tomcat启动慢](#tomcat启动慢)
-* [spring的Beanfactory和ApplicationContext区别](#spring的beanfactory和applicationcontext区别)
-* [mybatis有则更新，无则插入的关键字](#mybatis有则更新无则插入的关键字)
-* [线程池任务队列(workQueue)](#线程池任务队列workqueue)
-* [线程池拒绝策略](#线程池拒绝策略)
-* [ubuntu 修改wine分辨率](#ubuntu-修改wine分辨率)
-* [scp上传下载](#scp上传下载)
-* [内存模型(JMM)](#内存模型jmm)
-* [mysql索引最左匹配原则的理解](#mysql索引最左匹配原则的理解)
-* [URI和URL](#uri和url)
-* [activemq发布订阅保证消息可靠](#activemq发布订阅保证消息可靠)
-* [activemq保证顺序](#activemq保证顺序)
-* [线程还没执行完,redis锁已经过期了怎么办](#线程还没执行完redis锁已经过期了怎么办)
-* [ubuntu自定义桌面应用路径](#ubuntu自定义桌面应用路径)
-* [dubbo加载配置文件标签](#dubbo加载配置文件标签)
-* [zip乱码解决方案](#zip乱码解决方案)
-* [B站学习资源](#b站学习资源)
-* [学习方法论](#学习方法论)
-* [eureka缓存机制](#eureka缓存机制)
-* [系统异常监控sentry](#系统异常监控sentry)
-* [mysql or查询不生效](#mysql-or查询不生效)
-* [mysql-Employees Sample table download](#mysql-employees-sample-table-download)
-* [CAS存在的问题](#cas存在的问题)
-* [自旋锁](#自旋锁)
-* [事务隔离级别](#事务隔离级别)
-* [聚簇索引和非聚簇索引](#聚簇索引和非聚簇索引)
-* [将vim复制的内容粘贴到vim之外](#将vim复制的内容粘贴到vim之外)
-* [组合和聚合](#组合和聚合)
-* [各类加载器执行的目录](#各类加载器执行的目录)
-* [提高反射性能](#提高反射性能)
-* [字段基数和索引效率的关系](#字段基数和索引效率的关系)
-* [通过跳板机上传/下载文件](#通过跳板机上传下载文件)
-* [loadClass和class.forName在虚拟机层面的区别](#loadclass和classforname在虚拟机层面的区别)
-* [newInstance效率比new差的原因之一](#newinstance效率比new差的原因之一)
-* [new一个对象的步骤](#new一个对象的步骤)
-* [Redisson 锁相关](#redisson-锁相关)
-* [代理模式和适配器模式和装饰者模式区别](#代理模式和适配器模式和装饰者模式区别)
-* [红黑树和avl树区别](#红黑树和avl树区别)
-* [查看redis哨兵master的ip和端口](#查看redis哨兵master的ip和端口)
-* [vim保存readonly文件](#vim保存readonly文件)
-
-<!-- vim-markdown-toc -->
-
 ### 责任链模式
 + 责任链模式和组件化很像，将各个功能块单独抽离出来，即插即用
 
@@ -568,3 +496,87 @@
  6. ZooKeeper宕机之后
    + 消费者每次调用服务提供方是不经过ZooKeeper的，消费者只是从zookeeper那里获取服务提供方地址列表。所以当zookeeper宕机之后，不会影响消费者调用服务提供者
    + 影响的是zookeeper宕机之后如果提供者有变动，增加或者减少，无法把最新的服务提供者地址列表推送给消费者，所以消费者感知不到
+
+### 同步非阻塞的nio中包含阻塞的selector的理解
+ + 同步阻塞io：指的是bio在进行accept、read、write时，是同步阻塞的，此时如果是单线程，且io没有数据处理，会被一直挂着
+ + 同步非阻塞io: 单线程selector会处理多个io，当任何一个io有操作时，selector会被唤醒，所以在io1没数据时，io2可能被处理，所以线程并没有被io1阻塞
+ + 总结：
+   1. java nio说的同步非阻塞指的是对于io操作来说，而并非对于整个java nio 来说都是非阻塞的
+   2. 因为java nio 的selector是阻塞的，虽然说selector是阻塞的但是它实现了多路复用，而且相对于传统io，nio还节省了线程，以及线程之间切换带来的系统消耗。
+   3. 同步非阻塞的nio中包含阻塞的selector，只是关注的点不同而已，而且严格意义上将java nio应该说是多路复用，而不是同步非阻塞
+
+
+### http长连接和短连接
+  + 之所以说HTTP分为长连接和短连接，其实本质上是说的TCP连接。TCP连接是一个双向的通道，它是可以保持一段时间不关闭的，因此TCP连接才有真正的长连接和短连接这一说。
+  + 长连接好处：长连接情况下，多个HTTP请求可以复用同一个TCP连接，这就节省了很多TCP连接建立和断开的消耗。
+
+
+### 长轮询和短轮询
+ + 长轮询和短轮询最大的区别是，短轮询去服务端查询的时候，不管库存量有没有变化，服务器就立即返回结果了。
+ + 而长轮询则不是，在长轮询中，服务器如果检测到库存量没有变化的话，将会把当前请求挂起一段时间（这个时间也叫作超时时间，一般是几十秒）。在这个时间里，服务器会去检测库存量有没有变化，检测到变化就立即返回，否则就一直等到超时为止。
+
+### redis过期策略
+ + noeviction: 当内存不足以容纳新写入数据时，新写入操作会报错，这个一般没人用吧，实在是太恶心了。
+ + allkeys-lru：当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key（这个是最常用的）。
+ + allkeys-random：当内存不足以容纳新写入数据时，在键空间中，随机移除某个 key，这个一般没人用吧，为啥要随机，肯定是把最近最少使用的 key 给干掉啊。
+ + volatile-lru：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，移除最近最少使用的 key（这个一般不太合适）。
+ + volatile-random：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，随机移除某个 key。
+ + volatile-ttl：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，有更早过期时间的 key 优先移除。
+
+### LRU原理
+ + LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率也更高”。
+ + 【命中率】
+  - 当存在热点数据时，LRU的效率很好，但偶发性的、周期性的批量操作会导致LRU命中率急剧下降，缓存污染情况比较严重。
+ + 【复杂度】
+  - 实现简单。
+ + 【代价】
+  - 命中时需要遍历链表，找到命中的数据块索引，然后需要将数据移到头部。
+
+### LRU-K原理
+ + link : https://www.jianshu.com/p/d533d8a66795
+ + 数据第一次被访问，加入到访问历史列表；
+ + 如果数据在访问历史列表里后没有达到K次访问，则按照一定规则（FIFO，LRU）淘汰；
+ + 当访问历史队列中的数据访问次数达到K次后，将数据索引从历史队列删除，将数据移到缓存队列中，并缓存此数据，缓存队列重新按照时间排序；
+ + 缓存数据队列中被再次访问后，重新排序；
+ + 需要淘汰数据时，淘汰缓存队列中排在末尾的数据，即：淘汰“倒数第K次访问离现在最久”的数据。
+
+
+### mysql全表扫描比索引快的情况
+ + 假设一张表含有10万行数据--------100000行
+   我们要读取其中20%(2万)行数据----20000行
+   表中每行数据大小80字节----------80bytes
+   数据库中的数据块大小8K----------8000bytes
+
+   所以有以下结果：
+   每个数据块包含100行数据---------100行
+   这张表一共有1000个数据块--------1000块
+
+   通过索引读取20000行数据 = 约20000个table access by rowid = 需要处理20000个块来执行这个查询
+   但是，请大家注意：整个表只有1000个块！
+   所以：如果按照索引读取全部的数据的20%相当于将整张表平均读取了20次！！So，这种情况下直接读取整张表的效率会更高。
+ + 通过索引去读数据，在索引中找到一个键值，通过键值对应的rowId去对应的`数据块`中读取记录，查询20000条记录，需要查20000个数据块，表中共1000个块，所以要读20次表。
+ + 通过全表扫描，只需要顺序访问1000个数据块
+ + 同时要考虑20%的数据的分布的离散程度，如这20%集中在前面的20%的块，也就是集中在前面的200块，那回表20000次也就是索引块+200块，索引块+200如果小于1000块，走索引扫描块
+
+### mysql行锁死锁
+ + 报错：Deadlock found when trying to get lock; try restarting transaction
+ + CREATE TABLE `user_item` (
+    `id` BIGINT(20) NOT NULL,
+    `user_id` BIGINT(20) NOT NULL,
+    `item_id` BIGINT(20) NOT NULL,
+    `status` TINYINT(4) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_1` (`user_id`,`item_id`,`status`)
+  ) ENGINE=INNODB DEFAULT CHARSET=utf-8
+ + 执行语句 ： update user_item set status=1 where user_id=? and item_id=?
+ + 原因：行级锁并不是直接锁记录，而是锁索引，如果一条SQL语句用到了主键索引，mysql会锁住主键索引；如果一条语句操作了非主键索引，mysql会先锁住非主键索引，再锁定主键索引。
+  - 这个update语句会执行以下步骤：
+   1. 由于用到了非主键索引，首先需要获取idx_1上的行级锁
+   2. 紧接着根据主键进行更新，所以需要获取主键上的行级锁；
+   3. 更新完毕后，提交，并释放所有锁。
+  - 如果在步骤1和2之间突然插入一条语句：update user_item .....where id=? and user_id=?,这条语句会先锁住主键索引，然后锁住idx_1。
+ + 解决方案： 
+  - 先获取需要更新的记录的主键 ： select id from user_item where user_id=? and item_id=?
+  - 再根据主键id做update 
+
+
