@@ -87,6 +87,7 @@
     - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort | uniq -c 统计线程状态
     - jstack -l pid > jstack.log 导出线程日志
     - cat jstack.log | grep "java.lang.Thread.State" | sort -nr | uniq -c
+    
 ### JVM主动使用的场景
   1. 创建类的实例
   2. 访问类或接口的静态变量，或对静态变量赋值
