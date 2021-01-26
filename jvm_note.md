@@ -37,10 +37,26 @@
 ### 类的初始化步骤
 加载 --> 验证 --> 准备 --> 解析 --> 初始化 --> 使用 --> 卸载
 
-### jstat -gcutil 命令使用
+    
+### JVM主动使用的场景
+  1. 创建类的实例
+  2. 访问类或接口的静态变量，或对静态变量赋值
+  3. 调用类的静态方法
+  4. 反射(Class.forName)
+  5. 初始化其子类
+  6. 被标明为启动类的类(main、test)
+ 
+### 常量何时进入常量池
+  1. 编译时，jvm会将常量放入引用类的常量池中
+  2. 编译期不确定的值，比如uuid，是不会进入常量池的
+
+
+
+
+### jstat -gcutil 命令使用 (查看gc频率)
    + 命令格式 jstat -gcutil pid interval(ms)
   + eg: jstat -gcutil  16361 1000
-   print:	
+   print: 
    ```
       $ jstat -gcutil 12691 1000
       S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT 
@@ -62,7 +78,12 @@
   + jstack命令(Java Stack Trace) - 跟踪线程信息
   + jstat命令(Java Virtual Machine Statistics Monitoring Tool) - 主要查看GC信息和jvm内存信息(jstat -gcutil pid)
   + jmap命令(Java Memory Map) - 打印java进程所有‘对象’情况,产生了哪些些对象，及其数量(jmap -heap)
- 
+  + 查看占用cpu高的线程信息
+    1. top -H 找到cpu高的进程pid
+    2. top -p pid 按下H, 找到cpu高的线程pid
+    3. pid转16进制
+    4. jstack 进程pid |grep 16进制内容 （查看对应线程信息）
+    
 ### 导出dump文件并分析
   1. jmap -dump:format=b,file=xx.dump pid
   2. scp下载到本地
@@ -76,9 +97,9 @@
 
 ### jvm调优常用参数
   + jmap
-    - jmap -heap pid
+    - jmap -heap pid 查看堆内存信息
     - jmap -dump:format=b,file=heapdump.phrof pid
-    - jmap -histo:live pid
+    - jmap -histo:live pid 查看堆内存对象信息
   + jstat
     - jstat -gc pid 5000 显示gc的信息,查看gc的次数,及时间，每5秒刷新一次
     - jstat -gcutil pid 统计gc信息
@@ -87,17 +108,3 @@
     - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort | uniq -c 统计线程状态
     - jstack -l pid > jstack.log 导出线程日志
     - cat jstack.log | grep "java.lang.Thread.State" | sort -nr | uniq -c
-    
-### JVM主动使用的场景
-  1. 创建类的实例
-  2. 访问类或接口的静态变量，或对静态变量赋值
-  3. 调用类的静态方法
-  4. 反射(Class.forName)
-  5. 初始化其子类
-  6. 被标明为启动类的类(main、test)
- 
-### 常量何时进入常量池
-  1. 编译时，jvm会将常量放入引用类的常量池中
-  2. 编译期不确定的值，比如uuid，是不会进入常量池的
-
-

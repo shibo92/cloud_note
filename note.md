@@ -550,21 +550,53 @@
    + 优先检查zxid。zxid比较大的服务器优先作为leader。
    + 如果zxid相同的话，就比较sid，sid比较大的服务器作为leader。
 
-### newInstance效率比new差
- + 由于反射所涉及的类型是动态解析的，因此无法执行某些java虚拟机优化，因此反射操作的性能比非反射操作慢，应该在性能敏感的应用程序中频繁调用的代码部分中避免使用反射操作
-
-### new一个对象的步骤
- 1. 当虚拟机遇到一条new指令时候，首先去检查这个指令的参数是否能 在常量池中能否定位到一个类的符号引用 （即类的带路径全名），并且检查这个符号引用代表的类是否已被加载、解析和初始化过，即验证是否是第一次使用该类。如果没有（不是第一次使用），那必须先执行相应的类加载过程（class.forname()）。
- 2. 在类加载检查通过后，接下来虚拟机将 为新生的对象分配内存 。对象所需的内存的大小在类加载完成后便可以完全确定，为对象分配空间的任务等同于把一块确定大小的内存从Java堆中划分出来，目前常用的有两种方式，根据使用的垃圾收集器的不同使用不同的分配机制：
-   - 指针碰撞（Bump the Pointer）：假设Java堆的内存是绝对规整的，所有用过的内存都放一边，空闲的内存放在另一边，中间放着一个指针作为分界点的指示器，那所分配内存就仅仅把那个指针向空闲空间那边挪动一段与对象大小相等的距离。
-   - 空闲列表（Free List）：如果Java堆中的内存并不是规整的，已使用的内存和空间的内存是相互交错的，虚拟机必须维护一个空闲列表，记录上哪些内存块是可用的，在分配时候从列表中找到一块足够大的空间划分给对象使用。
- 3. 内存分配完后，虚拟机需要将分配到的内存空间中的数据类型都 初始化为零值（不包括对象头）；
- 4. 虚拟机要 对对象头进行必要的设置 ，例如这个对象是哪个类的实例（即所属类）、如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息，这些信息都存放在对象的对象头中。
-   至此，从虚拟机视角来看，一个新的对象已经产生了。但是在Java程序视角来看，执行new操作后会接着执行如下步骤：
- 5. 调用对象的init()方法 ,根据传入的属性值给对象属性赋值。
- 6. 在线程 栈中新建对象引用 ，并指向堆中刚刚新建的对象实例。
-
 ### win10激活
  1. slmgr /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX
  2. slmgr /skms zh.us.to 
  3. slmgr /ato
+
+### 大文件查找
+## 查看文件大小
+ls -lh |sort -nr
+ls -Slrh
+
+## 大于800M
+find . -type f -size +800M
+
+## 文件信息、属性
+find . -type f -size +800M  -print0 | xargs -0 ls -l
+
+## 具体大小
+find . -type f -size +800M  -print0 | xargs -0 du -h
+
+## 大小排序
+find . -type f -size +800M  -print0 | xargs -0 du -h | sort -nr
+
+## 查看磁盘情况
+du -h --max-depth=1
+
+##  二级目录
+du -h --max-depth=2 | sort -n
+
+## 只显示前12个
+du -hm --max-depth=2 | sort -nr | head -12
+
+## 查看未删除的句柄
+lsof -n | grep deleted
+
+### 大访问量ip查找
+awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.access.log.2021-01-04  |sort -nr |head -10
+
+### 自定义注解加事务后失效的解决方案
+  + 在自定义注解中添加 @Inherited
+
+### xss 注入/防注入
+  + <details ontoggle="alert`23`"></details>
+  + `public static String XSSReplace(String str) {
+        String s1 = str.replace("<", "&lt;");
+        String s2 = s1.replace(">", "&gt;");
+        String s3 = s2.replace("'", "&#39;");
+        String s4 = s3.replace("\"", " &quot;");
+        String s5 = s4.replace("script", "ｓｃｒｉｐｔ");
+        return s5;
+    }`
