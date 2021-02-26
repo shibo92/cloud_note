@@ -600,3 +600,6 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
         String s5 = s4.replace("script", "ｓｃｒｉｐｔ");
         return s5;
     }`
+
+### 关键词查找
+  + find . -type f |xargs grep "北京五八到家"

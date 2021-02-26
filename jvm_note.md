@@ -29,7 +29,7 @@
  + 元数据区取代了1.7版本及以前的永久代。元数据区和永久代本质上都是方法区的实现。方法区存放虚拟机加载的类信息，静态变量，常量等数据。
 
 ### eden和survivor回收过程
-  在GC开始的时候，对象只会存在于Eden区和名为“From”的Survivor区，Survivor区“To”是空的。紧接着进行GC，Eden区中所有存活的对象都会被复制到“To”，而在“From”区中，仍存活的对象会根据他们的年龄值来决定去向。年龄达到一定值(年龄阈值，可以通过-XX:MaxTenuringThreshold来设置)的对象会被移动到年老代中，没有达到阈值的对象会被复制到“To”区域。经过这次GC后，Eden区和From区已经被清空。这个时候，“From”和“To”会交换他们的角色，也就是新的“To”就是上次GC前的“From”，新的“From”就是上次GC前的“To”。不管怎样，都会保证名为To的Survivor区域是空的。Minor GC会一直重复这样的过程，直到“To”区被填满，“To”区被填满之后，会将所有对象移动到年老代中。
+  在GC开始的时候，对象只会存在于Eden区和名为“From”的Survivor区，Survivor区“To”是空的。当Eden满了之后，触发MinorGC，Eden区中所有存活的对象都会被复制到“To”区域，而在“From”区中，仍存活的对象会根据他们的年龄值来决定去向。年龄达到一定值(年龄阈值，可以通过-XX:MaxTenuringThreshold来设置)的对象会被移动到年老代中，没有达到阈值的对象会被复制到“To”区域。经过这次GC后，Eden区和From区已经被清空。这个时候，“From”和“To”会交换他们的角色，不管怎样，都会保证名为To的Survivor区域是空的。Minor GC会一直重复这样的过程，直到“To”区被填满，“To”区被填满之后，会将所有对象移动到年老代中。
 
 #### 一个对象的这一辈子
 我是一个普通的Java对象，我出生在Eden区，在Eden区我还看到和我长的很像的小兄弟，我们在Eden区中玩了挺长时间。有一天Eden区中的人实在是太多了，我就被迫去了Survivor区的“From”区，自从去了Survivor区，我就开始漂了，有时候在Survivor的“From”区，有时候在Survivor的“To”区，居无定所。直到我18岁的时候，爸爸说我成人了，该去社会上闯闯了。于是我就去了年老代那边，年老代里，人很多，并且年龄都挺大的，我在这里也认识了很多人。在年老代里，我生活了20年(每次GC加一岁)，然后被回收。
@@ -105,6 +105,9 @@
     - jstat -gcutil pid 统计gc信息
   + jatack
     - jstack pid > /home/xxx/dump17 导出线程文件
-    - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort | uniq -c 统计线程状态
+    - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort -nr | uniq -c | sort -nr 统计线程状态
     - jstack -l pid > jstack.log 导出线程日志
-    - cat jstack.log | grep "java.lang.Thread.State" | sort -nr | uniq -c
+    - cat jstack.log | grep "java.lang.Thread.State" | sort -nr |uniq -c |sort -nr
+  + top -Hp [pid] 查对应进程的线程情况
+   - printf '%X \n' [pid]  获取到长时间运行的线程[pid] 并转换为16进制
+   - jstack -l [pid] | grep [nid] -A 200 依据获得16进制的线程[pid] 打印堆栈信息
