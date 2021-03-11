@@ -191,7 +191,7 @@
         }  
       }  
     }  
-    ``` 
+    ```
 
 ### 解决redis缓存穿透(多次请求为null的数据)
   + 简单粗暴 将value为null的key也存到redis
@@ -603,3 +603,15 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 
 ### 关键词查找
   + find . -type f |xargs grep "北京五八到家"
+
+### redis跳表(skipList)
+  + zset数据大时，会用字典(dict)+skipList作为存储结构
+  + 字典及跳表的作用
+    - zsccore，根据key查询score,由dict完成。时间复杂度为O(1) 。
+    - zrank，查看key的排名，先由dict中由数据查到分数，再拿分数到skiplist中查出排名。时间复杂度为O(log n)。
+    - zrange，查看排行榜，由ziplist完成。时间复杂度为O(log (n)+M)，M为查询返回的元素个数。
+  + skiplist查找过程：从header最高层开始，如果当前节点的下一个节点包含的值比目标元素值小，则继续向右查找。如果下一个节点的值比目标值大，就转到当前层的下一层去查找。https://www.jianshu.com/p/09c3b0835ba6
+
+### i/o多路复用和线程池对比
+  + i/o多路复用，selector注册事件，单线程队列处理io，适用于io时间短的场景
+  + io时间长的场景考虑用线程池
