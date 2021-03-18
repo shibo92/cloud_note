@@ -61,7 +61,7 @@
       $ jstat -gcutil 12691 1000
       S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT 
       81.51   0.00   2.57  66.64  94.58  91.30   5730   60.270     4    1.343   61.612
-   ```  
+   ```
   + S0: 新生代中Survivor space 0区已使用空间的百分比
   + S1: 新生代中Survivor space 1区已使用空间的百分比
   + E: 新生代已使用空间的百分比
@@ -111,3 +111,27 @@
   + top -Hp [pid] 查对应进程的线程情况
    - printf '%X \n' [pid]  获取到长时间运行的线程[pid] 并转换为16进制
    - jstack -l [pid] | grep [nid] -A 200 依据获得16进制的线程[pid] 打印堆栈信息
+
+### jvm收集器
+  + 新生代收集器
+    1. Parallel Scavenge  
+      - jdk1.7,1.8 默认的收集器
+      - 特点是吞吐量大,但是stop the world时间长
+      - 复制算法(eden+survival)
+    2. ParNew 收集器
+      - 默认开启的收集线程数和 CPU 数量一致
+      - 与 CMS 收集器搭配使用
+      - -XX:+UserConcMarkSweepGC指定cms收集器时，年轻代默认为ParNew
+      - 特点是尽可能缩短stw的时间
+      - 复制算法
+  + 老年代收集器
+    1. Parallel Old 
+      - jdk1.7,1.8 默认的收集器, 
+      - 标记-整理算法
+    2. CMS
+      - 以最短回收停顿时间为目标的收集器
+      - 随着 CPU 数量下降，占用 CPU 资源越多，吞吐量越小
+      - 适用场景：重视服务器响应速度，要求系统停顿时间最短
+      - 标记-清除算法, 会产生垃圾碎片（为了降低响应时间，所以没有使用标记-整理算法)
+  + G1 
+    1. 
