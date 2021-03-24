@@ -159,15 +159,18 @@
 	- Linux下还有一个特殊的文件/dev/null，它就像一个无底洞，所有重定向到它的信息都会消失得无影无踪。这一点非常有用，当我们不需要回显程序的所有信息时，就可以将输出重定向到/dev/null。
 
 ### mybatis原理
-  1. 创建SqlSessionFactory实例;
-  2. 实例化过程中，加载配置文件创建configuration对象(mybatis-config.xml);
-  3. 通过factory创建SqlSession对象,把configuaration传入SqlSession;
-  4. 通过SqlSession获取mapper接口动态代理; // UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-  5. 通过代理对调sqlsession中查询方法; // User user = mapper.findById(1);
-  6. sqlsession将查询方法转发给executor;
-  7. executor基于JDBC访问数据库获取数据;
-  8. executor通过反射将数据转换成POJO并返回给sqlsession;
-  9. 数据返回给调用者
+  + 初始化阶段
+    1. 创建SqlSessionFactory实例;
+    2. 实例化过程中，加载配置文件创建configuration对象(mybatis-config.xml);
+    3. 通过factory创建SqlSession对象,把configuaration传入SqlSession;
+    4. 通过SqlSession获取并初始化mapper接口动态代理; // UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    5. spring ioc会接管getMapper生成的代理对象并注入
+  + 执行阶段
+    5. 通过代理对象调用sqlsession的查询方法; // User user = mapper.findById(1);
+    6. sqlsession将查询方法转发给executor;
+    7. executor基于JDBC访问数据库获取数据;
+    8. executor通过反射将数据转换成POJO并返回给sqlsession;
+    9. 数据返回给调用者
 
 ### 解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)
   + 使用互斥锁
@@ -591,14 +594,83 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
   + 在自定义注解中添加 @Inherited
 
 ### xss 注入/防注入
-  + <details ontoggle="alert`23`"></details>
-  + `public static String XSSReplace(String str) {
-        String s1 = str.replace("<", "&lt;");
-        String s2 = s1.replace(">", "&gt;");
-        String s3 = s2.replace("'", "&#39;");
-        String s4 = s3.replace("\"", " &quot;");
-        String s5 = s4.replace("script", "ｓｃｒｉｐｔ");
-        return s5;
+  + case 
+   - <details ontoggle="alert`23`"></details>
+   - <iframe srcdoc="<script src=http://www.baidu.com/1.js></script>"</iframe>
+  + 解决方案
+  ` public static String XSSReplace(String htmlStr) {
+    Pattern p = null; // 正则表达式
+    Matcher m = null; // 操作的字符串
+    StringBuffer tmp = null;
+    String str = "";
+    boolean isHave = false;
+
+    String[] Rstr = { "meta", "script", "object", "embed","iframe" };
+    if (htmlStr == null || !(htmlStr.length() > 0)) {
+      return "";
+    }
+    str = htmlStr.toLowerCase();
+    for (int i = 0; i < Rstr.length; i++) {
+      p = Pattern.compile("<" + Rstr[i] + "(.[^>])*>");
+      m = p.matcher(str);
+      tmp = new StringBuffer();
+      if (m.find()) {
+        m.appendReplacement(tmp, "<" + Rstr[i] + ">");
+        while (m.find()) {
+
+          m.appendReplacement(tmp, "<" + Rstr[i] + ">");
+        }
+        isHave = true;
+      }
+
+      m.appendTail(tmp);
+      str = tmp.toString();
+
+      p = Pattern.compile("</" + Rstr[i] + "(.[^>])*>");
+      m = p.matcher(str);
+      tmp = new StringBuffer();
+      if (m.find()) {
+        m.appendReplacement(tmp, "</" + Rstr[i] + ">");
+        while (m.find()) {
+          m.appendReplacement(tmp, "</" + Rstr[i] + ">");
+        }
+        isHave = true;
+      }
+      m.appendTail(tmp);
+      str = tmp.toString();
+
+    }
+
+    String[] Rstr1 = { "function", "window\\.", "javascript:", "script",
+        "js:", "about:", "file:", "document\\.", "vbs:", "frame",
+        "cookie", "onclick", "onfinish", "onmouse", "onexit=",
+        "onerror", "onclick", "onkey", "onload", "onfocus", "onblur","ontoggle","srcdoc" };
+
+    for (int i = 0; i < Rstr1.length; i++) {
+      p = Pattern.compile("<([^<>])*" + Rstr1[i] + "([^<>])*>([^<>])*</([^<>])*>");
+
+      m = p.matcher(str);
+      tmp = new StringBuffer();
+      if (m.find()) {
+        m.appendReplacement(tmp, "");
+        while (m.find()) {
+          m.appendReplacement(tmp, "");
+        }
+        isHave = true;
+      }
+      m.appendTail(tmp);
+      str = tmp.toString();
+    }
+
+    if (isHave) {
+      htmlStr = str;
+    }
+
+    htmlStr = htmlStr.replaceAll("%3C", "<");
+    htmlStr = htmlStr.replaceAll("%3E", ">");
+    htmlStr = htmlStr.replaceAll("%2F", "");
+    htmlStr = htmlStr.replaceAll("&#", "<b>&#</b>");
+    return htmlStr;
     }`
 
 ### 关键词查找
@@ -615,3 +687,25 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 ### i/o多路复用和线程池对比
   + i/o多路复用，selector注册事件，单线程队列处理io，适用于io时间短的场景
   + io时间长的场景考虑用线程池
+
+### arrayList线程不安全
+  + 场景1
+   1. 线程1 -> add -> 扩容 -> 停顿
+   2. 线程2 -> add ->发现不需要扩容,element[size++] = e
+   3. 线程1 -> element[size++] = e，下标越界
+  + 场景2
+   1. 线程1 -> add -> 扩容 -> size++ 中途停顿
+   2. 线程2 -> add -> 扩容 -> element[size++] = e, 赋值成功, element[1] = e
+   3. 线程1 -> element[size++] = e, 赋值成功, element[1] = e，覆盖成功
+
+### redis Sentinel
+  + PING/PONG命令
+    - 每秒向Master、Slave以及其他Sentinel发送PING命令，确认在线
+    - 如果有实例回应时间超过`own-after-milliseconds`选项所指定的值，则被Sentinel标记为下线
+  + INFO命令
+    - 每10秒一次的频率向它已知的所有Master，Slave发送 INFO 命令
+    - 当Master被Sentinel标记为客观下线时，Sentinel 向下线的 Master 的所有Slave发送 INFO命令的频率会从10秒一次改为每秒一次。
+    - 若没有足够数量的Sentinel同意Master已经下线，Master的客观下线状态就会被移除。 若 Master重新向Sentinel 的PING命令返回有效回复，Master的主观下线状态就会被移除。
+  + 订阅sentinel:hello频道
+    - sentinel节点通过__sentinel__:hello频道进行信息交换(对节点的"看法"和自身的信息)，达成共识。
+    - 
