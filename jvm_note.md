@@ -134,4 +134,7 @@
       - 适用场景：重视服务器响应速度，要求系统停顿时间最短
       - 标记-清除算法, 会产生垃圾碎片（为了降低响应时间，所以没有使用标记-整理算法)
   + G1 
-    1. 
+
+### daojia jvm参数配置
+  + -server -Xms2g -Xmx2g -Xmn512m -Xss1024K -XX:PermSize=256m -XX:MaxPermSize=512m -XX:ParallelGCThreads=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:SurvivorRatio=4 -XX:MaxTenuringThreshold=10 -XX:CMSInitiatingOccupancyFraction=80
+
