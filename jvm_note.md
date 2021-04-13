@@ -135,6 +135,17 @@
       - 标记-清除算法, 会产生垃圾碎片（为了降低响应时间，所以没有使用标记-整理算法)
   + G1 
 
-### daojia jvm参数配置
-  + -server -Xms2g -Xmx2g -Xmn512m -Xss1024K -XX:PermSize=256m -XX:MaxPermSize=512m -XX:ParallelGCThreads=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:SurvivorRatio=4 -XX:MaxTenuringThreshold=10 -XX:CMSInitiatingOccupancyFraction=80
-
+### jvm参数配置
+  + dwf
+    - -server -Xms2g -Xmx2g -Xmn512m -Xss1024K -XX:PermSize=256m -XX:MaxPermSize=512m -XX:ParallelGCThreads=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:SurvivorRatio=4 -XX:MaxTenuringThreshold=10 -XX:CMSInitiatingOccupancyFraction=80
+  + dsf
+    - -Xms1024M -Xmx1024M -Xmn512M -Xss1024K -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=256m -XX:ParallelGCThreads=20 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseCMSCompactAtFullCollection -XX:SurvivorRatio=65536 -XX:MaxTenuringThreshold=0 -XX:CMSInitiatingOccupancyFraction=80
+  + 参数解释
+    - Xms2g 堆内存最小值
+    - Xmx2g 堆内存最大值
+    - Xmn512m 新生代大大小
+    - Xss1024K 栈内存大小
+    - XX:PermSize 堆外内存大小
+    - XX:MaxPermSize=512m 堆外内存最大值
+    - XX:ParallelGCThreads 
+    - SurvivorRatio:eden和两个survior的比例。默认为8，表示8:2，设置为4表示4:2
