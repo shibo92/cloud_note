@@ -95,7 +95,7 @@
   + printf "%x\n" 21742 将pid转换成十六进制
   + jstack 进程pid |grep 线程pid 
 
-### jvm调优常用参数
+### jvm排查常用参数
   + jmap
     - jmap -heap pid 查看堆内存信息
     - jmap -dump:format=b,file=heapdump.phrof pid
