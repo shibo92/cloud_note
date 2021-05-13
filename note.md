@@ -247,10 +247,10 @@
     3. synchronousQueue：这个队列比较特殊，它不会保存提交的任务，而是将直接新建一个线程来执行新来的任务。
   + 根据《阿里编码规约》，Executors创建的线程池都是Linked方式或Synchronous方式，所以建议使用`ThreadPoolExecutor`手动创建线程池,并设置workQueue为`ArrayBlockingQueue`
  
-### 线程池拒绝策略
+### 线程池拒绝策略 RejectedExecutionHandler
   1. AbortPolicy: 丢弃任务并抛出RejectedExecutionException异。(默认)
   2. DiscardPolicy: 直接丢弃任务，不抛出异常。
-  3. DiscardOldestPolicy：丢弃队列最前面的任务，执行后面的任务
+  3. DiscardOldestPolicy：丢弃队列最前面的任务，执行新加入的任务
   4. CallerRunsPolicy：由调用线程处理该任务 
 
 ### ubuntu 修改wine分辨率
@@ -726,3 +726,8 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
    + 默认采用基于语句的复制，一旦发现基于语句的无法精确的复制时，就会采用基于行的复制
    + 相应地，binlog的格式也有三种：STATEMENT，ROW，MIXED。
 
+### 定位cpu消耗高的sql
+  1. pidstat -t -p <mysqld_pid> 1  5
+  2. select * from performance_schema.threads where thread_os_id = xx;
+  3. select * from information_schema.`PROCESSLIST` where id=threads.processlist_id;
+  4. 
