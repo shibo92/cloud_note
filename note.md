@@ -342,6 +342,12 @@
  2. 提交读(read-committed): 事务A提交后，事务B未提交，可看到A中刚修改的内容
  3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
  4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
+ 
+### 事务隔离级别（理解）
+ 1. 未提交读(read-committed): 事务A未提交，事务B可读取A中已修改的内容
+ 2. 提交读(read-committed): 事务A已提交，事务B才能看到A修改的内容
+ 3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
+ 4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
 
 ### 聚簇索引和非聚簇索引
  + 聚簇索引(InnoDB): 
