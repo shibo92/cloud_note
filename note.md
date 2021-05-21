@@ -736,4 +736,6 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
   1. pidstat -t -p <mysqld_pid> 1  5
   2. select * from performance_schema.threads where thread_os_id = xx;
   3. select * from information_schema.`PROCESSLIST` where id=threads.processlist_id;
-  4. 
+
+### synchronized 锁升级过程
+  1. https://blog.csdn.net/zzti_erlie/article/details/103997713
