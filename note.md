@@ -338,7 +338,7 @@
  3. 自旋锁实现原理同样是cas，AtomicInteger中调用unsafe进行自增操作就是自旋锁`unsafe.getAndAddInt`，源码中是一个do-while循环, unsafe-->直接读内存
  
 ### 事务隔离级别
- 1. 未提交读(read-committed): 事务A未提交，事务B可读取A中已修改的内容
+ 1. 未提交读(read-uncommitted): 事务A未提交，事务B可读取A中已修改的内容
  2. 提交读(read-committed): 事务A提交后，事务B未提交，可看到A中刚修改的内容
  3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
  4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
