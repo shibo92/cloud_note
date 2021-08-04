@@ -737,6 +737,6 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
     + 订阅sentinel:hello频道
     - sentinel节点通过__sentinel__:hello频道进行信息交换(对节点的"看法"和自身的信息)，达成共识。
     
-### mysqla redo、undo区别
+### mysql redo、undo区别
  1. redo是个缓冲区，记录下修改后的记录，后续刷入到磁盘
  2. undo记录修改前的记录，用于做rollback操作
