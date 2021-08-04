@@ -34,11 +34,6 @@
     ```
 	[链接地址](https://explainextended.com/2010/08/24/20-latest-unique-records/)
 
-### redis两种持久化方式
-+ RDB 和 AOF
-  1. RDB: 快照形式是直接把内存中的数据保存到一个dump文件中，定时保存，一次性写入
-  2. 把所有的对redis的服务器进行修改的命令都存到一个文件里，命令的集合
- 
 ### Lock 和 Synchronized区别
 + Synchronized是虚拟机关键字，LocK是个类
 + Synchronized自动释放锁，Lock需要在final中手动释放
@@ -70,13 +65,6 @@
 ### class.forName()和classLoader区别
 + class.forName()前者除了将类的.class文件加载到jvm中之外，还会对类进行解释，执行类中的static块。
 + classLoader只是将.class文件加载到jvm中，不会执行static中的内容,只有在newInstance才会去执行static块。
-
-### redis i/o多路复用
-+ 假设你是一个老师，让30个学生解答一道题目，然后检查学生做的是否正确，你有下面几个选择：
-  1. 第一种选择：按顺序逐个检查，先检查A，然后是B，之后是C、D。。。这中间如果有一个学生卡主，全班都会被耽误。这种模式就好比，你用循环挨个处理socket，根本不具有并发能力。
-  2. 第二种选择：你创建30个分身，每个分身检查一个学生的答案是否正确。 这种类似于为每一个用户创建一个进程或者线程处理连接。
-  3. 第三种选择，你站在讲台上等，谁解答完谁举手。这时C、D举手，表示他们解答问题完毕，你下去依次检查C、D的答案，然后继续回到讲台上等。此时E、A又举手，然后去处理E和A。。。 这种就是IO复用模型，Linux下的select、poll和epoll就是干这个的。
-  4. 将用户socket对应的fd注册进epoll，然后epoll帮你监听哪些socket上有消息到达，这样就避免了大量的无用操作。此时的socket应该采用非阻塞模式。这样，整个过程只在调用select、poll、epoll这些调用的时候才会阻塞，收发客户消息是不会阻塞的，整个进程或者线程就被充分利用起来，这就是事件驱动，所谓的reactor模式。
 
 ### 对象进入老年代的条件
 1. 大对象直接进入老年代
@@ -172,33 +160,6 @@
     8. executor通过反射将数据转换成POJO并返回给sqlsession;
     9. 数据返回给调用者
 
-### 解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)
-  + 使用互斥锁
-    1. 当第一个线程进来发现redis没有指定的key
-    2. 则执行setNx(loke_key,"1")，然后去操作db
-    3. 其他线程进入后也发现redis没有指定的key，执行setNx，但是返回false，此时sleep(n)秒，再去get
-    4. 实现如下:
-    ```
-    String value = redis.get(key);  
-       if (value  == null) {  
-        if (redis.setnx(key_mutex, "1")) {  
-            // 3 min timeout to avoid mutex holder crash  
-            redis.expire(key_mutex, 3 * 60)  
-            value = db.get(key);  
-            redis.set(key, value);  
-            redis.delete(key_mutex);  
-        } else {  
-            //其他线程休息50毫秒后重试  
-            Thread.sleep(50);  
-            get(key);  
-        }  
-      }  
-    }  
-    ```
-
-### 解决redis缓存穿透(多次请求为null的数据)
-  + 简单粗暴 将value为null的key也存到redis
-
 ### 高并发秒杀解决方案
   + 转自知乎：https://www.zhihu.com/question/54895548
 
@@ -286,11 +247,6 @@
   + 通过高级特性consumer独有消费者（exclusive consumer）
   + 利用Activemq的高级特性：messageGroups
 
-### 线程还没执行完,redis锁已经过期了怎么办
-  1. 假如某线程成功得到了锁，并且设置的超时时间是30秒。当A线程还未执行完，锁已被释放
-  2. B线程创建锁并执行完毕，并将锁删除，此时删除的是线程B加上的锁
-  3. 如何避免：可以在del释放锁之前做一个判断，验证当前的锁的value是不是自己加的锁。加锁的时候把当前的线程ID当做value，并在删除之前验证key对应的value是不是自己线程的ID。
-
 ### ubuntu自定义桌面应用路径
   + /usr/share/application
 
@@ -342,11 +298,12 @@
  2. 提交读(read-committed): 事务A提交后，事务B未提交，可看到A中刚修改的内容
  3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
  4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
+ 5. 参考：https://blog.csdn.net/zhouym_/article/details/90381606
  
 ### 事务隔离级别（理解）
- 1. 未提交读(read-uncommitted): 事务A未提交，事务B可读取A中已修改的内容
- 2. 提交读(read-committed): 事务A已提交，事务B才能看到A修改的内容
- 3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
+ 1. 未提交读(read-uncommitted): 事务A未提交，事务B可及时读取(脏读、不可重复读、幻读)
+ 2. 提交读(read-committed): 事务A已提交，事务B会看到最新版本的快照(不可重复读、幻读)
+ 3. 可重复读(repeatable-read): 事务A提交修改，事务B始终读取第一次快照(幻读)
  4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
 
 ### 聚簇索引和非聚簇索引
@@ -378,7 +335,7 @@
 ### 字段基数和索引效率的关系
  + count(DISTINCT(column))/count(*) 越大，索引效果越好
 
-### 通过跳板机上传/下载文件
+### 通过跳板机上传 /下载文件
  + install zssh
  + 用类似ssh的方式连接服务器：zssh username@ip
  + 上传文件
@@ -410,10 +367,6 @@
  5. 调用对象的init()方法 ,根据传入的属性值给对象属性赋值。
  6. 在线程 栈中新建对象引用 ，并指向堆中刚刚新建的对象实例。
 
-### Redisson 锁相关
- + lock有过期参数，会使用evalLua加锁
- + lock没有过期参数，会使用evalLua加锁一个30s的key,并添加监听线程持续对锁过期时间续命
-
 ### 代理模式和适配器模式和装饰者模式区别
  + 整体组件结构一样
  + 不同点是
@@ -425,10 +378,6 @@
 ### 红黑树和avl树区别
   1. 红黑树在左右平衡上非严格
   2. 减少了旋转次数
-
-### 查看redis哨兵master的ip和端口
-  1. telnet host port
-  2. 执行 info 命令 查看 主机ip ，用主机的 ip 和端口连接
 
 ### vim保存readonly文件
   1. :w !sudo tee %
@@ -470,18 +419,9 @@
   + 之所以说HTTP分为长连接和短连接，其实本质上是说的TCP连接。TCP连接是一个双向的通道，它是可以保持一段时间不关闭的，因此TCP连接才有真正的长连接和短连接这一说。
   + 长连接好处：长连接情况下，多个HTTP请求可以复用同一个TCP连接，这就节省了很多TCP连接建立和断开的消耗。
 
-
 ### 长轮询和短轮询
  + 长轮询和短轮询最大的区别是，短轮询去服务端查询的时候，不管库存量有没有变化，服务器就立即返回结果了。
  + 而长轮询则不是，在长轮询中，服务器如果检测到库存量没有变化的话，将会把当前请求挂起一段时间（这个时间也叫作超时时间，一般是几十秒）。在这个时间里，服务器会去检测库存量有没有变化，检测到变化就立即返回，否则就一直等到超时为止。
-
-### redis过期策略
- + noeviction: 当内存不足以容纳新写入数据时，新写入操作会报错，这个一般没人用吧，实在是太恶心了。
- + allkeys-lru：当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key（这个是最常用的）。
- + allkeys-random：当内存不足以容纳新写入数据时，在键空间中，随机移除某个 key，这个一般没人用吧，为啥要随机，肯定是把最近最少使用的 key 给干掉啊。
- + volatile-lru：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，移除最近最少使用的 key（这个一般不太合适）。
- + volatile-random：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，随机移除某个 key。
- + volatile-ttl：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，有更早过期时间的 key 优先移除。
 
 ### LRU原理
  + LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率也更高”。
@@ -685,14 +625,6 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 ### 关键词查找
   + find . -type f |xargs grep "北京五八到家"
 
-### redis跳表(skipList)
-  + zset数据大时，会用字典(dict)+skipList作为存储结构
-  + 字典及跳表的作用
-    - zsccore，根据key查询score,由dict完成。时间复杂度为O(1) 。
-    - zrank，查看key的排名，先由dict中由数据查到分数，再拿分数到skiplist中查出排名。时间复杂度为O(log n)。
-    - zrange，查看排行榜，由ziplist完成。时间复杂度为O(log (n)+M)，M为查询返回的元素个数。
-  + skiplist查找过程：从header最高层开始，如果当前节点的下一个节点包含的值比目标元素值小，则继续向右查找。如果下一个节点的值比目标值大，就转到当前层的下一层去查找。https://www.jianshu.com/p/09c3b0835ba6
-
 ### i/o多路复用和线程池对比
   + i/o多路复用，selector注册事件，单线程队列处理io，适用于io时间短的场景
   + io时间长的场景考虑用线程池
@@ -706,17 +638,6 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
    1. 线程1 -> add -> 扩容 -> size++ 中途停顿
    2. 线程2 -> add -> 扩容 -> element[size++] = e, 赋值成功, element[1] = e
    3. 线程1 -> element[size++] = e, 赋值成功, element[1] = e，覆盖成功
-
-### redis Sentinel
-  + PING/PONG命令
-    - 每秒向Master、Slave以及其他Sentinel发送PING命令，确认在线
-    - 如果有实例回应时间超过`own-after-milliseconds`选项所指定的值，则被Sentinel标记为下线
-  + INFO命令
-    - 每10秒一次的频率向它已知的所有Master，Slave发送 INFO 命令
-    - 当Master被Sentinel标记为客观下线时，Sentinel 向下线的 Master 的所有Slave发送 INFO命令的频率会从10秒一次改为每秒一次。
-    - 若没有足够数量的Sentinel同意Master已经下线，Master的客观下线状态就会被移除。 若 Master重新向Sentinel 的PING命令返回有效回复，Master的主观下线状态就会被移除。
-  + 订阅sentinel:hello频道
-    - sentinel节点通过__sentinel__:hello频道进行信息交换(对节点的"看法"和自身的信息)，达成共识。
 
 ### 线程池什么时候回收非核心线程
   1. 在没有后续任务产生的情况下，空闲线程等待`keepAliveTime`秒后被回收
@@ -739,3 +660,83 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 
 ### synchronized 锁升级过程
   1. https://blog.csdn.net/zzti_erlie/article/details/103997713
+
+### innodb 笔记
+  + 页是innodb的最小存储结构
+  + varchar长度超8098会将数据页存到blob页中，小于则还是在数据页当中
+
+## redis
+  ### redis集群
+    1.数组保存槽数据，计算数据所属槽值之后，查看其所属节点，进行MOVE操作
+  ### redis两种持久化方式
+    1.RDB:快照形式是直接把内存中的数据保存到一个dump文件中，定时保存，一次性写入
+    2.AOF:把所有的对redis的服务器进行修改的命令都存到一个文件里，命令的集合
+  ### redis i/o多路复用
+    + 假设你是一个老师，让30个学生解答一道题目，然后检查学生做的是否正确，你有下面几个选择：
+      1. 第一种选择：按顺序逐个检查，先检查A，然后是B，之后是C、D。。。这中间如果有一个学生卡主，全班都会被耽误。这种模式就好比，你用循环挨个处理socket，根本不具有并发能力。
+      2. 第二种选择：你创建30个分身，每个分身检查一个学生的答案是否正确。 这种类似于为每一个用户创建一个进程或者线程处理连接。
+      3. 第三种选择，你站在讲台上等，谁解答完谁举手。这时C、D举手，表示他们解答问题完毕，你下去依次检查C、D的答案，然后继续回到讲台上等。此时E、A又举手，然后去处理E和A。。。 这种就是IO复用模型，Linux下的select、poll和epoll就是干这个的。
+      4. 将用户socket对应的fd注册进epoll，然后epoll帮你监听哪些socket上有消息到达，这样就避免了大量的无用操作。此时的socket应该采用非阻塞模式。这样，整个过程只在调用select、poll、epoll这些调用的时候才会阻塞，收发客户消息是不会阻塞的，整个进程或者线程就被充分利用起来，这就是事件驱动，所谓的reactor模式。
+  ### 解决redis缓存雪崩问题(多个key同时过期，短暂时间内并发访问数据库，造成雪崩)
+    + 使用互斥锁
+      1. 当第一个线程进来发现redis没有指定的key
+      2. 则执行setNx(loke_key,"1")，然后去操作db
+      3. 其他线程进入后也发现redis没有指定的key，执行setNx，但是返回false，此时sleep(n)秒，再去get
+      4. 实现如下:
+      ```
+      String value = redis.get(key);  
+         if (value  == null) {  
+          if (redis.setnx(key_mutex, "1")) {  
+              // 3 min timeout to avoid mutex holder crash  
+              redis.expire(key_mutex, 3 * 60)  
+              value = db.get(key);  
+              redis.set(key, value);  
+              redis.delete(key_mutex);  
+          } else {  
+              //其他线程休息50毫秒后重试  
+              Thread.sleep(50);  
+              get(key);  
+          }  
+        }  
+      }  
+      ```
+  ### 解决redis缓存穿透(多次请求为null的数据)
+    + 简单粗暴 将value为null的key也存到redis
+  ### 线程还没执行完,redis锁已经过期了怎么办
+    1.假如某线程成功得到了锁，并且设置的超时时间是30秒。当A线程还未执行完，锁已  被释放
+    2.B线程创建锁并执行完毕，并将锁删除，此时删除的是线程B加上的锁
+    3.如何避免：可以在del释放锁之前做一个判断，验证当前的锁的value是不是自己加的锁。加锁的时候把当前的线程ID当做value，并在删除之前验证key对应的value是不是自己线程的ID。
+  ### Redisson 锁相关
+   + lock有过期参数，会使用evalLua加锁
+   + lock没有过期参数，会使用evalLua加锁一个30s的key,并添加监听线程持续对锁过期时  间续命
+  ### 查看redis哨兵master的ip和端口
+    1. telnet host port
+    2. 执行 info 命令 查看 主机ip ，用主机的 ip 和端口连接
+  ### redis过期策略
+   + noeviction: 当内存不足以容纳新写入数据时，新写入操作会报错，这个一般没人用吧  ，实在是太恶心了。
+   + allkeys-lru：当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的   key（这个是最常用的）。
+   + allkeys-random：当内存不足以容纳新写入数据时，在键空间中，随机移除某个   key，这个一般没人用吧，为啥要随机，肯定是把最近最少使用的 key 给干掉啊。
+   + volatile-lru：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，移除最近最少使用的 key（这个一般不太合适）。
+   + volatile-random：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，随机移除某个 key。
+   + volatile-ttl：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，有更早过期时间的 key 优先移除。
+  ### redis跳表(skipList)
+    + zset数据大时，会用字典(dict)+skipList作为存储结构
+    + 字典及跳表的作用
+      - zsccore，根据key查询score,由dict完成。时间复杂度为O(1)。
+      - zrank，查看key的排名，先由dict中由数据查到分数，再拿分数到skiplist中查出排名。时间复杂度为O(log n)。
+      - zrange，查看排行榜，由ziplist完成。时间复杂度为O(log(n)+M)，M为查询返回的元素个数。
+    + skiplist查找过程：从header最高层开始，如果当前节点的下一个节点包含的值比目标元素值小，则继续向右查找。如果下一个节点的值比目标值大，就转到当前层的下一层去查找。https://www.jianshu.com/p/09c3b0835ba6
+  ### redis Sentinel
+    + PING/PONG命令
+      - 每秒向Master、Slave以及其他Sentinel发送PING命令，确认在线
+      - 如果有实例回应时间超过`own-after-milliseconds`  选项所指定的值，则被Sentinel标记为下线
+    + INFO命令
+      - 每10秒一次的频率向它已知的所有Master，Slave发送 INFO 命令
+      - 当Master被Sentinel标记为客观下线时，Sentinel向下线的Master的所有Slave发送 INFO命令的频率会从10秒一次改为每秒一次。
+      - 若没有足够数量的Sentinel同意Master已经下线，Master的客观下线状态就会被移除。 若 Master重新向Sentinel   的PING命令返回有效回复，Master的主观下线状态就会被移除。
+    + 订阅sentinel:hello频道
+    - sentinel节点通过__sentinel__:hello频道进行信息交换(对节点的"看法"和自身的信息)，达成共识。
+    
+### mysqla redo、undo区别
+ 1. redo是个缓冲区，记录下修改后的记录，后续刷入到磁盘
+ 2. undo记录修改前的记录，用于做rollback操作
