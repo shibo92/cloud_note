@@ -740,3 +740,15 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 ### mysql redo、undo区别
  1. redo是个缓冲区，记录下修改后的记录，后续刷入到磁盘
  2. undo记录修改前的记录，用于做rollback操作
+
+### bio, nio,select, epoll
+ 1. bio 阻塞等待数据
+ 2. nio 等待数据不需要阻塞，可以同步执行其他事情，同时轮询等待数据
+ 3. select 将数据放入多个fd当中，统一轮询监听，有数据之后，处理指定fe
+ 4. epoll 将数据放入多个fd，操作系统维护一个fe记录，统一轮询监听，有数据之后，新开线程处理指定fd
+
+### 线程池中的工作线程如何被回收
+ 1. ThreadPoolExecutor回收线程：当getTask()获取不到任务，返回null时，调用processWorkerExit方法从Set集合中remove掉线程
+ 2. getTask()返回null又分为2两种场景：
+    + 线程正常执行完任务，并且已经等到超过keepAliveTime时间，大于核心线程数，那么会返回null，结束外层的runWorker中的while循环
+    + 当调用线程池shutdown()方法，会将线程池状态置为shutdown，并且需要等待正在执行的任务执行完，阻塞队列中的任务执行完才能返回null
