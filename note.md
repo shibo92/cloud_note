@@ -70,6 +70,7 @@
 1. 大对象直接进入老年代
 2. 到达年龄之后进入老年代
 3. 相同年龄的对象大小之和大于survivor(幸存区)大小的的一半，所有相同年龄的对象都进入老年代
+3. 老年代空间担保策略失败
 
 ### mysql主从同步的工作过程 
   1. 主库上会开启了二进制bin-log日志记录，同时运行有一个IO线程；
@@ -90,10 +91,12 @@
 ### scp上传下载命令
   scp [参数] [原路径] [目标路径]
   1. 上传
-  命令格式：scp local_file remote_username@remote_ip:remote_folder 
-  例如： scp  -P 40022 /Users/shibo/local/huawei_unsigned_signed.apk root@ip:/home/qiban/bzit_app/ 
+
+    命令格式：scp local_file remote_username@remote_ip:remote_folder 
+    例如： scp  -P 40022 /Users/shibo/local/huawei_unsigned_signed.apk root@ip:/home/qiban/bzit_app/ 
   2. 下载
-  例如： scp root@ip:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
+
+    例如： scp root@ip:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
 
 ### mysql orderBy优化
   问题 select * from t where xxx limit xx,xx 加上orderBy之后查询速度下降。
@@ -120,10 +123,12 @@
   链接地址：https://explainextended.com/2010/08/24/20-latest-unique-records/
 
   1. dubbo暴露的是service层的接口，使用的方式为：消费者的controller层调用服务提供者的service.
-  springcloud暴露的是controller接口，使用的方式为：消费者的service层调用服务者的controller。（类似于http方式调用）
+
+    springcloud暴露的是controller接口，使用的方式为：消费者的service层调用服务者的controller。（类似于http方式调用）
   2. 一个是基于rpc，一个是基于http
   3. dubbo由于是二进制的传输，占用带宽会更少
-  springCloud是http协议传输，带宽会比较多，同时使用http协议一般会使用JSON报文，消耗会更大
+
+    springCloud是http协议传输，带宽会比较多，同时使用http协议一般会使用JSON报文，消耗会更大
   4. dubbo的开发难度较大，原因是dubbo的jar包依赖问题很多大型工程无法解决
   5. dubbo的注册中心可以选择zk,redis等多种，springcloud的注册中心只能用eureka或者自研
 
@@ -142,6 +147,7 @@
   + 关于Linux的3中重定向
 	- 0:表示标准输入
     - 1:标准输出,在一般使用时，默认的是标准输出
+
  	- 2:标准错误信息输出
   + 关于/dev/null文件
 	- Linux下还有一个特殊的文件/dev/null，它就像一个无底洞，所有重定向到它的信息都会消失得无影无踪。这一点非常有用，当我们不需要回显程序的所有信息时，就可以将输出重定向到/dev/null。
@@ -207,7 +213,7 @@
     2. LinkedBlockingQueue：基于链表的先进先出队列，如果创建时没有指定此队列大小，则默认为Integer.MAX_VALUE；
     3. synchronousQueue：这个队列比较特殊，它不会保存提交的任务，而是将直接新建一个线程来执行新来的任务。
   + 根据《阿里编码规约》，Executors创建的线程池都是Linked方式或Synchronous方式，所以建议使用`ThreadPoolExecutor`手动创建线程池,并设置workQueue为`ArrayBlockingQueue`
- 
+
 ### 线程池拒绝策略 RejectedExecutionHandler
   1. AbortPolicy: 丢弃任务并抛出RejectedExecutionException异。(默认)
   2. DiscardPolicy: 直接丢弃任务，不抛出异常。
@@ -227,7 +233,7 @@
    2. 参数：-v 查看进度 
         -P 端口
         -r 传输目录
- 
+
 ### 内存模型(JMM)
   + 了保证并发编程中可以满足原子性、可见性及有序性。有一个重要的概念，那就是——内存模型
   + 关键字：volatile、synchronized、final、concurren
@@ -287,19 +293,19 @@
  2. 循环开销时间大
  3. 只能保证一个共享变量的原子操作，无法保证多个变量的原子性
    + jdk1.5提供了AtomicRefrence类，可以吧多个变量放在一个对象里进行cas操作
-   
+
 ### 自旋锁
  1. 避免了线程切换的开销
  2. 如果锁的占用时间很短，很适合用自旋锁，反之则不合适
  3. 自旋锁实现原理同样是cas，AtomicInteger中调用unsafe进行自增操作就是自旋锁`unsafe.getAndAddInt`，源码中是一个do-while循环, unsafe-->直接读内存
- 
+
 ### 事务隔离级别
  1. 未提交读(read-uncommitted): 事务A未提交，事务B可读取A中已修改的内容
  2. 提交读(read-committed): 事务A提交后，事务B未提交，可看到A中刚修改的内容
  3. 可重复读(repeatable-read): 事务A提交修改，事务B也需要提交才能看到
  4. 串行化(Serializable): 事务A没有提交，事务B不能进行修改
  5. 参考：https://blog.csdn.net/zhouym_/article/details/90381606
- 
+
 ### 事务隔离级别（理解）
  1. 未提交读(read-uncommitted): 事务A未提交，事务B可及时读取(脏读、不可重复读、幻读)
  2. 提交读(read-committed): 事务A已提交，事务B会看到最新版本的快照(不可重复读、幻读)
@@ -363,7 +369,7 @@
    - 空闲列表（Free List）：如果Java堆中的内存并不是规整的，已使用的内存和空间的内存是相互交错的，虚拟机必须维护一个空闲列表，记录上哪些内存块是可用的，在分配时候从列表中找到一块足够大的空间划分给对象使用。
  3. 内存分配完后，虚拟机需要将分配到的内存空间中的数据类型都 初始化为零值（不包括对象头）；
  4. 虚拟机要 对对象头进行必要的设置 ，例如这个对象是哪个类的实例（即所属类）、如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息，这些信息都存放在对象的对象头中。
-   至此，从虚拟机视角来看，一个新的对象已经产生了。但是在Java程序视角来看，执行new操作后会接着执行如下步骤：
+      至此，从虚拟机视角来看，一个新的对象已经产生了。但是在Java程序视角来看，执行new操作后会接着执行如下步骤：
  5. 调用对象的init()方法 ,根据传入的属性值给对象属性赋值。
  6. 在线程 栈中新建对象引用 ，并指向堆中刚刚新建的对象实例。
 
@@ -467,7 +473,7 @@
     `status` TINYINT(4) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_1` (`user_id`,`item_id`,`status`)
-  ) ENGINE=INNODB DEFAULT CHARSET=utf-8
+    ) ENGINE=INNODB DEFAULT CHARSET=utf-8
  + 执行语句 ： update user_item set status=1 where user_id=? and item_id=?
  + 原因：行级锁并不是直接锁记录，而是锁索引，如果一条SQL语句用到了主键索引，mysql会锁住主键索引；如果一条语句操作了非主键索引，mysql会先锁住非主键索引，再锁定主键索引。
   - 这个update语句会执行以下步骤：
@@ -547,7 +553,7 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
    - <details ontoggle="alert`23`"></details>
    - <iframe srcdoc="<script src=http://www.baidu.com/1.js></script>"</iframe>
   + 解决方案
-  ` public static String XSSReplace(String htmlStr) {
+    ` public static String XSSReplace(String htmlStr) {
     Pattern p = null; // 正则表达式
     Matcher m = null; // 操作的字符串
     StringBuffer tmp = null;
@@ -631,24 +637,24 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 
 ### arrayList线程不安全
   + 场景1
-   1. 线程1 -> add -> 扩容 -> 停顿
-   2. 线程2 -> add ->发现不需要扩容,element[size++] = e
-   3. 线程1 -> element[size++] = e，下标越界
+       1. 线程1 -> add -> 扩容 -> 停顿
+       1. 线程2 -> add ->发现不需要扩容,element[size++] = e
+       1. 线程1 -> element[size++] = e，下标越界
   + 场景2
-   1. 线程1 -> add -> 扩容 -> size++ 中途停顿
-   2. 线程2 -> add -> 扩容 -> element[size++] = e, 赋值成功, element[1] = e
-   3. 线程1 -> element[size++] = e, 赋值成功, element[1] = e，覆盖成功
+    1. 线程1 -> add -> 扩容 -> size++ 中途停顿
+    2. 线程2 -> add -> 扩容 -> element[size++] = e, 赋值成功, element[1] = e
+    3. 线程1 -> element[size++] = e, 赋值成功, element[1] = e，覆盖成功
 
 ### 线程池什么时候回收非核心线程
   1. 在没有后续任务产生的情况下，空闲线程等待`keepAliveTime`秒后被回收
   2. 如果有后续任务，则空闲线程一直会轮询等待执行任务
- 
+
 ### mysql binlog复制类型
   + 复制类型
     1. 基于语句的复制
-在Master上执行的SQL语句，在Slave上执行同样的语句。MySQL默认采用基于语句的复制，效率比较高。一旦发现没法精确复制时，会自动选着基于行的复制
+    在Master上执行的SQL语句，在Slave上执行同样的语句。MySQL默认采用基于语句的复制，效率比较高。一旦发现没法精确复制时，会自动选着基于行的复制
     2. 基于行的复制
-把改变的内容复制到Slave，而不是把命令在Slave上执行一遍。从MySQL5.0开始支持
+    把改变的内容复制到Slave，而不是把命令在Slave上执行一遍。从MySQL5.0开始支持
     3. 混合类型的复制
    + 默认采用基于语句的复制，一旦发现基于语句的无法精确的复制时，就会采用基于行的复制
    + 相应地，binlog的格式也有三种：STATEMENT，ROW，MIXED。
@@ -736,7 +742,7 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
       - 若没有足够数量的Sentinel同意Master已经下线，Master的客观下线状态就会被移除。 若 Master重新向Sentinel   的PING命令返回有效回复，Master的主观下线状态就会被移除。
     + 订阅sentinel:hello频道
     - sentinel节点通过__sentinel__:hello频道进行信息交换(对节点的"看法"和自身的信息)，达成共识。
-    
+
 ### mysql redo、undo区别
  1. redo是个缓冲区，记录下修改后的记录，后续刷入到磁盘
  2. undo记录修改前的记录，用于做rollback操作
@@ -748,7 +754,16 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
  4. epoll 将数据放入多个fd，操作系统维护一个fe记录，统一轮询监听，有数据之后，新开线程处理指定fd
 
 ### 线程池中的工作线程如何被回收
- 1. ThreadPoolExecutor回收线程：当getTask()获取不到任务，返回null时，调用processWorkerExit方法从Set集合中remove掉线程
+  1. ThreadPoolExecutor回收线程：runWorker中循环执行getTask()方法，当getTask()获取不到任务，返回null时，调用processWorkerExit方法从Set集合中remove掉线程
  2. getTask()返回null又分为2两种场景：
     + 线程正常执行完任务，并且已经等到超过keepAliveTime时间，大于核心线程数，那么会返回null，结束外层的runWorker中的while循环
     + 当调用线程池shutdown()方法，会将线程池状态置为shutdown，并且需要等待正在执行的任务执行完，阻塞队列中的任务执行完才能返回null
+
+### JDK动态代理和CGLIB动态地理区别
+
+1. JDK 动态代理是面向接口的，需要实现类通过接口定义业务方法。
+2. CGLib采用了非常底层的字节码技术，其原理是通过目标类的字节码为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。因此如果被代理类被final关键字所修饰，会失败。
+3. 更详细一点说，代理类将目标类作为自己的父类并为其中的每个非final委托方法创建两个方法：
+   + 一个是与目标方法签名相同的方法，它在方法中会通过super调用目标方法；
+   + 另一个是代理类独有的方法，称之为Callback回调方法，它会判断这个方法是否绑定了拦截器（实现了MethodInterceptor接口的对象），若存在则将调用intercept方法对目标方法进行代理，也就是在前后加上一些增强逻辑。intercept中就会调用上面介绍的签名相同的方法。
+4. 原文链接：https://blog.csdn.net/Dustin_CDS/article/details/79685620

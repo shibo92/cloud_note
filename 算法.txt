@@ -1,0 +1,175 @@
+    
+    //链表的反转
+    public static Node ReverseIteratively(Node head){
+        Node pre = null;
+        Node next = null;
+        while (head != null) {
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+
+// 链表环
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while(fast != null && fast.next != null){
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow == fast){
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+// 两个栈实现队列
+public class Solution {
+    Stack<Integer> stack1 = new Stack<Integer>();
+    Stack<Integer> stack2 = new Stack<Integer>();
+    
+    public void push(int node) {
+        stack1.push(node);
+    }
+    
+    public int pop() {
+        if(stack2.isEmpty()){
+            while(!stack1.empty()){
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.pop();
+    }
+}
+
+// 二分查找2
+    public int search (int[] nums, int target) {
+        // write code here
+        int left=0,right=nums.length-1;
+        int idx = -1;
+        while(left <= right){
+            int mid = (right + left)/2;
+            if(nums[mid] == target){
+                idx = mid;
+                right = mid -1;
+            } else if(nums[mid] < target){
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return idx;
+    }
+
+    // 层序遍历
+     public ArrayList<ArrayList<Integer>> levelOrder (TreeNode root) {
+        // write code here
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        if(root==null) return res;
+        Queue<TreeNode> q = new LinkedList();
+        q.add(root);
+        while(q.size()>0){
+            int n = q.size();
+            ArrayList<Integer> tmp = new ArrayList<>();
+            for(int i=0;i<n;i++){
+                TreeNode cur = q.poll();
+                tmp.add(cur.val);
+                if(cur.left != null) q.add(cur.left);
+                if(cur.right != null) q.add(cur.right);    
+            }
+            res.add(tmp);
+        }
+        return res;
+    }
+    // 跳台阶
+    public int JumpFloor(int target) {
+        if(target<=2)return target;
+        int[] result = new int[target];
+        result[0] = 1;
+        result[1] = 2;
+        for(int i=2;i<target;i++){
+            result[i] = result[i-1] + result[i-2]; 
+        }
+        return result[target-1];
+    }
+
+// 最长子串 无重复
+    public int maxLength (int[] arr) {
+        // write code here
+        Map<Integer, Integer> map = new HashMap<>();
+        int max = 0;
+        int tmp = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if(map.containsKey(arr[i])){
+                tmp = Math.max(tmp, map.get(arr[i]));
+            }
+            map.put(arr[i],i+1);
+            max =Math.max(max,i-tmp + 1);
+        }
+        return max;
+    }
+    // 最长公共前缀
+    public String longestCommonPrefix (String[] strs) {
+        // write code here
+        if(strs.length == 0){
+            return "";
+        }
+        Arrays.sort(strs);
+        String st1 = strs[0];
+        String st2 = strs[strs.length-1];
+        int i = 0;
+        String st = "";
+        while(true){
+            if(i == st1.length()){
+                break;
+            }else if(st1.charAt(i) == st2.charAt(i)){
+                st = st + st1.charAt(i);
+                i++;
+            }else{
+                break;
+            }
+        }
+        return st;
+    }
+
+    // 括号序列
+    public boolean isValid (String s) {
+        Stack<String> stack = new Stack<>();
+        // write code here
+        for(int i=0;i<s.length();i++){
+            String c = String.valueOf(s.charAt(i));
+            if(c.equals("{")||c.equals("(")||c.equals("[")){
+                stack.push(c);
+            }else{
+                if(stack.isEmpty()){
+                    return false;
+                }
+                if(c.equals("}") && stack.peek().equals("{")){
+                    stack.pop();
+                }else if(c.equals(")") && stack.peek().equals("(")){
+                    stack.pop();
+                }else if(c.equals("]") && stack.peek().equals("[")){
+                    stack.pop();
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+    // 斐波那契
+    public int Fibonacci(int n) {
+        if(n<2) return n;
+        int a = 0;
+        int b = 1;
+        int res = 0;
+        for(int i=2;i<=n;i++){
+            res=a+b;
+            a=b;
+            b=res;
+        }
+        return res;
+    }

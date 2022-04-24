@@ -24,7 +24,7 @@
 				jdk1.6: 永久代（方法区）
 				jdk1.7: 堆内存
 				jdk1.8: 元空间）
- 
+
 5. 元数据区(1.8)
  + 元数据区取代了1.7版本及以前的永久代。元数据区和永久代本质上都是方法区的实现。方法区存放虚拟机加载的类信息，静态变量，常量等数据。
 
@@ -37,7 +37,7 @@
 ### 类的初始化步骤
 加载 --> 验证 --> 准备 --> 解析 --> 初始化 --> 使用 --> 卸载
 
-    
+
 ### JVM主动使用的场景
   1. 创建类的实例
   2. 访问类或接口的静态变量，或对静态变量赋值
@@ -45,7 +45,7 @@
   4. 反射(Class.forName)
   5. 初始化其子类
   6. 被标明为启动类的类(main、test)
- 
+
 ### 常量何时进入常量池
   1. 编译时，jvm会将常量放入引用类的常量池中
   2. 编译期不确定的值，比如uuid，是不会进入常量池的
@@ -56,7 +56,7 @@
 ### jstat -gcutil 命令使用 (查看gc频率)
    + 命令格式 jstat -gcutil pid interval(ms)
   + eg: jstat -gcutil  16361 1000
-   print: 
+      print: 
    ```
       $ jstat -gcutil 12691 1000
       S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT 
@@ -98,12 +98,12 @@
 ### jvm排查常用参数
   + jmap
     - jmap -heap pid 查看堆内存信息
-    - jmap -dump:format=b,file=heapdump.phrof pid
+    - jmap -dump:format=b,file=heapdump.phrof pid 导出dump文件
     - jmap -histo:live pid 查看堆内存对象信息
   + jstat
     - jstat -gc pid 5000 显示gc的信息,查看gc的次数,及时间，每5秒刷新一次
     - jstat -gcutil pid 统计gc信息
-  + jatack
+  + jstack
     - jstack -l pid > /home/xxx/dump17 导出线程文件
     - grep java.lang.Thread.State dump17 | awk '{print $2$3$4$5}'| sort -nr | uniq -c | sort -nr 统计线程状态
     - jstack -l pid > jstack.log 导出线程日志
