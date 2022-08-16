@@ -817,8 +817,13 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
 
 ##### 线程过多问题排查
 
- 1. jstack pid| grep java.lang.Thread.State| awk '{print $2$3$4$5}' | sort | uniq -c
+  1. jstack pid| grep java.lang.Thread.State| awk '{print $2$3$4$5}' | sort | uniq -c
+  2. https://blog.csdn.net/fengsheng5210/article/details/123610380
 
- 2. https://blog.csdn.net/fengsheng5210/article/details/123610380
 
-    
+
+#### invoke dubbo接口
+
+1. telnet ip port
+2.  invoke com.xxx.xxx.getXXX({"class":"入参dto","入参1":123,"入参2":-1})
+

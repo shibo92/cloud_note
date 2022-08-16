@@ -99,7 +99,7 @@
   + jmap
     - jmap -heap pid 查看堆内存信息
     - jmap -dump:format=b,file=heapdump.phrof pid 导出dump文件
-    - jmap -histo:live pid 查看堆内存对象信息
+    - jmap -histo:live pid [| sort -n-r| head -10]查看堆内存对象信息
   + jstat
     - jstat -gc pid 5000 显示gc的信息,查看gc的次数,及时间，每5秒刷新一次
     - jstat -gcutil pid 统计gc信息
