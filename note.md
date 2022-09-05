@@ -514,38 +514,43 @@
  3. slmgr /ato
 
 ### 大文件查找
-## 查看文件大小
+
+
+### 查看文件大小
+
 ls -lh |sort -nr
 ls -Slrh
 
-## 大于800M
+### 大于800M
 find . -type f -size +800M
 
-## 文件信息、属性
+### 文件信息、属性
 find . -type f -size +800M  -print0 | xargs -0 ls -l
 
-## 具体大小
+### 具体大小
 find . -type f -size +800M  -print0 | xargs -0 du -h
 
-## 大小排序
+### 大小排序
 find . -type f -size +800M  -print0 | xargs -0 du -h | sort -nr
 
-## 查看磁盘情况
+### 查看磁盘情况
 du -h --max-depth=1
 
-##  二级目录
+###  二级目录
 du -h --max-depth=2 | sort -n
 
-## 只显示前12个
+### 只显示前12个
 du -hm --max-depth=2 | sort -nr | head -12
 
-## 查看未删除的句柄
+### 查看未删除的句柄
 lsof -n | grep deleted
 
 ### 大访问量ip查找
+
 awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.access.log.2021-01-04  |sort -nr |head -10
 
 ### 自定义注解加事务后失效的解决方案
+
   + 在自定义注解中添加 @Inherited
 
 ### xss 注入/防注入
@@ -751,15 +756,15 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
  1. bio 阻塞等待数据
  2. nio 等待数据不需要阻塞，可以同步执行其他事情，同时轮询等待数据
  3. select 将数据放入多个fd当中，统一轮询监听，有数据之后，处理指定fe
- 4. epoll 将数据放入多个fd，操作系统维护一个fe记录，统一轮询监听，有数据之后，新开线程处理指定fd
+ 4. epoll 将数据放入多个fd，操作系统维护一个fd记录，统一轮询监听，有数据之后，新开线程处理指定fd
 
-### 线程池中的工作线程如何被回收
+## 线程池中的工作线程如何被回收
   1. ThreadPoolExecutor回收线程：runWorker中循环执行getTask()方法，当getTask()获取不到任务，返回null时，调用processWorkerExit方法从Set集合中remove掉线程
  2. getTask()返回null又分为2两种场景：
     + 线程正常执行完任务，并且已经等到超过keepAliveTime时间，大于核心线程数，那么会返回null，结束外层的runWorker中的while循环
     + 当调用线程池shutdown()方法，会将线程池状态置为shutdown，并且需要等待正在执行的任务执行完，阻塞队列中的任务执行完才能返回null
 
-### JDK动态代理和CGLIB动态地理区别
+## JDK动态代理和CGLIB动态地理区别
 
 1. JDK 动态代理是面向接口的，需要实现类通过接口定义业务方法。
 2. CGLib采用了非常底层的字节码技术，其原理是通过目标类的字节码为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。因此如果被代理类被final关键字所修饰，会失败。
@@ -767,58 +772,6 @@ awk '{a[$1] += 1;} END {for (i in a) printf("%d %s\n", a[i], i);}' com.daojia.ac
    + 一个是与目标方法签名相同的方法，它在方法中会通过super调用目标方法；
    + 另一个是代理类独有的方法，称之为Callback回调方法，它会判断这个方法是否绑定了拦截器（实现了MethodInterceptor接口的对象），若存在则将调用intercept方法对目标方法进行代理，也就是在前后加上一些增强逻辑。intercept中就会调用上面介绍的签名相同的方法。
 4. 原文链接：https://blog.csdn.net/Dustin_CDS/article/details/79685620
-
-
-
-### 多线程
-
-##### 线程状态
-
- 1. 线程状态 https://blog.csdn.net/xingjing1226/article/details/81977129
-
-    + **新建(NEW)**：新创建了一个线程对象。
-
-    + **可运行(RUNNABLE)**：线程对象创建后，其他线程(比如main线程）调用了该对象的start()方法。该状态的线程位于可运行[线程池](https://so.csdn.net/so/search?q=线程池&spm=1001.2101.3001.7020)中，等待被线程调度选中，获取cpu 的使用权。
-      
-      + 运行(RUNNING) 可运行状态(runnable)的线程获得了cpu 时间片（timeslice） ，执行程序代码。
-      
-    +  **阻塞(BLOCKED)**：阻塞状态是指线程因为某种原因放弃了cpu 使用权，也即让出了cpu timeslice，暂时停止运行。直到线程进入可运行(runnable)状态，才有机会再次获得cpu timeslice 转到运行(running)状态。阻塞的情况分三种： 
-
-      > (一). 等待阻塞(**WAITING**)：运行(running)的线程执行obj.wait(), join()方法，JVM会把该线程放入等待队列(waiting queue)中。
-      > (二). 同步阻塞(**BLOCKED**)：运行(running)的线程在获取对象的同步锁时，若该同步锁被别的线程占用，则JVM会把该线程放入锁池(lock pool)中。
-      > (三). 其他阻塞(**TIMED_WAITING**)：运行(running)的线程执行Thread.sleep(long ms)或t.join()方法，或者发出了I/O请求时，JVM会把该线程置为阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入可运行(runnable)状态。
-
-    +  **终止(TERMINATED)**：线程run()、main() 方法执行结束，或者因异常退出了run()方法，则该线程结束生命周期。死亡的线程不可再次复生。
-
-2. sleep()和wait()方法区别 https://blog.csdn.net/weixin_44440522/article/details/119352307
-   + 属于不同的两个类，sleep()方法是线程类（Thread）的静态方法，wait()方法是Object类里的方法。
-   + sleep()方法不会释放锁，wait()方法释放对象锁。
-   + sleep()方法可以在任何地方使用，wait()方法则只能在同步方法或同步块中使用。
-   + sleep()使线程进入阻塞状态（线程睡眠），wait()方法使线程进入等待队列（线程挂起），也就是阻塞类别不同。
-
-##### 内存屏障和cpu缓存（volatile）
-
- 	1. 重排序：cpu执行写指令，发现缓存区被其他cpu占用时，会优先执行后续的读指令（没有依赖关系的指令）
- 	2. 内存屏障：
- 	 + store 写内存屏障： 在指令后插入写屏障，强制写入主存，且会一直等待，不会优先执行后续读指令。
- 	 + load 读内存配置： 在指令前插入读屏障，使缓存失效，强制从主存加载数据。
-
-##### ThreadLocal
-
-1. 每个线程维护一个ThreadLocalMap
-2. ThreadLocalMap.Entry 对 ThreadLocal是弱引用，但是Entry对Value是强引用，会有内存泄漏风险，所以用完需要remove
-
-##### 线程池
-
-1. 为什么要有线程池
-   + 线程创建、销毁消耗资源
-   + 线程过多，消耗内存（单个线程默认栈内存大小1M）
-   + 线程过多时，cpu切换耗时
-
-##### 线程过多问题排查
-
-  1. jstack pid| grep java.lang.Thread.State| awk '{print $2$3$4$5}' | sort | uniq -c
-  2. https://blog.csdn.net/fengsheng5210/article/details/123610380
 
 
 

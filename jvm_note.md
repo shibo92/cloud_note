@@ -165,3 +165,8 @@
     - XX:MaxPermSize=512m 堆外内存最大值
     - XX:ParallelGCThreads 
     - SurvivorRatio:eden和两个survior的比例。默认为8，表示8:2，设置为4表示4:2
+
+### 线程过多问题排查
+
+    1. jstack pid| grep java.lang.Thread.State| awk '{print $2$3$4$5}' | sort | uniq -c
+    2. https://blog.csdn.net/fengsheng5210/article/details/123610380
